@@ -36,13 +36,22 @@ def average_rating(dictionary):
         average_dict[key] = average
     return average_dict
 
-def plot_average(dictionary):
-    plt.plot(*zip(*sorted(dictionary.items())))
+def keys_list(dictionary):
+    keys = []
+    for key in dictionary:
+        keys.append(key)
+    return keys
+
+def plot_average(dictionary, list):
+    plt.style.use('dark_background')
+    lines = plt.plot(*zip(*sorted(dictionary.items())))
+    plt.setp(lines, color='#8211BC', linewidth=2.0, marker='*', mec='#A1F10A', mfc='#A1F10A', markersize=10)
     plt.xlabel('Years')
     plt.ylabel('Ratings')
-    plt.xticks(range(2008, 2018))
+    plt.xticks(range(list[0], (list[-1] + 1)))
     plt.show()
 
 if __name__ == "__main__":
     average_dict = average_rating(data_dict)
-    plot_average(average_dict)
+    keys = keys_list(average_dict)
+    plot_average(average_dict, keys)
