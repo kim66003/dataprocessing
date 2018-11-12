@@ -5,8 +5,11 @@ import pandas as pd
 
 def create_dataframe(filename):
     dataframe = pd.read_csv(filename, usecols=['Country', 'Region', 'Pop. Density (per sq. mi.)', 'Infant mortality (per 1000 births)', 'GDP ($ per capita) dollars'])
-    dataframe.columns = ['Country', 'Region', 'Pop. Density', 'Infant mortality', 'GDP']
     return dataframe
+
+popdens = 'Pop. Density (per sq. mi.)'
+infantmort = 'Infant mortality (per 1000 births)'
+gdp = 'GDP ($ per capita) dollars'
 
 def preprocess(dataframe):
     dataframe = dataframe.dropna()
@@ -15,39 +18,35 @@ def preprocess(dataframe):
         if dataframe[column].str.contains('dollars').any():
             dataframe[column] = dataframe[column].apply(lambda x: x.strip(' dollars'))
             dataframe[column] = pd.to_numeric(dataframe[column])
-    dataframe['Pop. Density'] = dataframe['Pop. Density'].str.replace(',','.')
-    dataframe['Pop. Density'] = pd.to_numeric(dataframe['Pop. Density'], downcast='float')
-    dataframe['Infant mortality'] = dataframe['Infant mortality'].str.replace(',','.')
-    dataframe['Infant mortality'] = pd.to_numeric(dataframe['Infant mortality'], downcast='float')
+    dataframe[popdens] = dataframe[popdens].str.replace(',','.')
+    dataframe[popdens] = pd.to_numeric(dataframe[popdens], downcast='float')
+    dataframe[infantmort] = dataframe[infantmort].str.replace(',','.')
+    dataframe[infantmort] = pd.to_numeric(dataframe[infantmort], downcast='float')
     return dataframe
 
 def save_csv(filename, dataframe):
     dataframe.to_csv(filename)
 
-def calc_mean(dataframe, column):
-    return dataframe[column].mean()
-
-def calc_median(dataframe, column):
-    return dataframe[column].median()
-
-def calc_mode(dataframe, column):
+def calc_central_tend(dataframe, column):
+    ct_list = []
+    ct_list.append(column)
+    ct_list.append(dataframe[column].mean())
+    ct_list.append(dataframe[column].median())
     column_mode = dataframe[column].mode()
-    return column_mode[0]
-
-def calc_std(dataframe, column):
-    return dataframe[column].std()
+    ct_list.append(column_mode[0])
+    ct_list.append(dataframe[column].std())
+    return ct_list
 
 def format_float(float):
     return "{:.2f}".format(float)
 
-def central_tendency(dataframe, column):
-    print(f"Mean of {column}: ", format_float((calc_mean(dataframe, column))))
-    print(f"Median of {column}: ", format_float((calc_median(dataframe, column))))
-    print(f"Mode of {column}: ", format_float((calc_mode(dataframe, column))))
-    print(f"Standard deviation of {column}: ", format_float((calc_std(dataframe, column))))
+def central_tendency(list):
+    print(f"Central tendency of {list[0]}:\nMean:", format_float(list[1]))
+    print("Median:", format_float(list[2]), "\nMode:", format_float(list[3]))
+    print("Standard deviation:", format_float(list[4]))
 
 def outliers(dataframe, column):
-    dataframe = dataframe[np.abs(dataframe[column]-calc_mean(dataframe, column)) <= (3*calc_std(dataframe, column))]
+    dataframe = dataframe[np.abs(dataframe[column]-dataframe[column].mean()) <= (3*dataframe[column].std())]
     return dataframe
 
 def hist_plot(dataframe, column, rows):
@@ -55,17 +54,17 @@ def hist_plot(dataframe, column, rows):
     plt.show()
 
 def five_number(dataframe, column):
-    five_num_list = []
-    five_num_list.append(column)
+    fn_list = []
+    fn_list.append(column)
     minimum = dataframe[column].min()
-    five_num_list.append(minimum)
+    fn_list.append(minimum)
     quantiles = dataframe[column].quantile([0.25,0.5,0.75])
-    five_num_list.append(quantiles[0.25])
-    five_num_list.append(quantiles[0.50])
-    five_num_list.append(quantiles[0.75])
+    fn_list.append(quantiles[0.25])
+    fn_list.append(quantiles[0.50])
+    fn_list.append(quantiles[0.75])
     maximum = dataframe[column].max()
-    five_num_list.append(maximum)
-    return five_num_list
+    fn_list.append(maximum)
+    return fn_list
 
 def print_five_num(list):
     print(f"Five Number Summary of {list[0]}:\nMin:", format_float(list[1]))
@@ -73,12 +72,20 @@ def print_five_num(list):
     print("Q3:", format_float(list[4]),"\nMax:", format_float(list[5]))
 
 if __name__ == '__main__':
+    #create and preprocess dataframe
     df = create_dataframe("input.csv")
     df = preprocess(df)
+    df = outliers(df, gdp)
+    #save df in csv
     save_csv("outfile.csv", df)
-    central_tendency(df, "Infant mortality")
-    rows = len(df["Country"])
-    df = outliers(df, "GDP")
-    fivenum = five_number(df, "Infant mortality")
+    #five number summary
+    fivenum = five_number(df, infantmort)
     print_five_num(fivenum)
-    # hist_plot(df, "GDP", rows)
+    #central tendency
+    ct = calc_central_tend(df, popdens)
+    central_tendency(ct)
+    #plot histogram
+    rows = len(df['Country'])
+    # hist_plot(df, gdp, rows)
+    df.boxplot(column=[infantmort], return_type='axes')
+    plt.show()

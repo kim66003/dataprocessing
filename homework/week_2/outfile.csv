@@ -1,4 +1,4 @@
-,Country,Region,Pop. Density,Infant mortality,GDP
+,Country,Region,Pop. Density (per sq. mi.),Infant mortality (per 1000 births),GDP ($ per capita) dollars
 0,Afghanistan ,ASIA (EX. NEAR EAST)         ,48.0,163.07,700
 1,Albania ,EASTERN EUROPE                     ,124.6,21.52,4500
 2,Algeria ,NORTHERN AFRICA                    ,13.8,31.0,6000
@@ -182,7 +182,6 @@
 190,Spain ,WESTERN EUROPE                     ,80.0,4.42,22000
 191,Sri Lanka ,ASIA (EX. NEAR EAST)         ,308.2,14.35,3700
 192,Sudan ,SUB-SAHARAN AFRICA                 ,16.5,62.5,1900
-193,Suriname ,LATIN AMER. & CARIB    ,2.7,23.57,400000
 194,Swaziland ,SUB-SAHARAN AFRICA                 ,65.5,69.27,4900
 195,Sweden ,WESTERN EUROPE                     ,20.0,2.77,26800
 196,Switzerland ,WESTERN EUROPE                     ,182.2,4.39,32700
