@@ -53,7 +53,7 @@ def hist_plot(dataframe, column, rows):
     hist_column = df.hist(column, bins=rows)
     plt.show()
 
-def five_number(dataframe, column):
+def calc_five_num(dataframe, column):
     fn_list = []
     fn_list.append(column)
     minimum = dataframe[column].min()
@@ -66,10 +66,14 @@ def five_number(dataframe, column):
     fn_list.append(maximum)
     return fn_list
 
-def print_five_num(list):
+def five_number(list):
     print(f"Five Number Summary of {list[0]}:\nMin:", format_float(list[1]))
     print("Q1:", format_float(list[2]),"\nMedian:", format_float(list[3]))
     print("Q3:", format_float(list[4]),"\nMax:", format_float(list[5]))
+
+def boxplot(dataframe, column):
+    dataframe.boxplot(column=[column], return_type='axes')
+    plt.show()
 
 if __name__ == '__main__':
     #create and preprocess dataframe
@@ -79,13 +83,12 @@ if __name__ == '__main__':
     #save df in csv
     save_csv("outfile.csv", df)
     #five number summary
-    fivenum = five_number(df, infantmort)
-    print_five_num(fivenum)
+    fivenum = calc_five_num(df, infantmort)
+    five_number(fivenum)
     #central tendency
     ct = calc_central_tend(df, popdens)
     central_tendency(ct)
     #plot histogram
     rows = len(df['Country'])
     # hist_plot(df, gdp, rows)
-    df.boxplot(column=[infantmort], return_type='axes')
-    plt.show()
+    boxplot(df, infantmort)
