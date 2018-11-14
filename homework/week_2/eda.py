@@ -14,6 +14,10 @@ popdens = 'Pop. Density (per sq. mi.)'
 infantmort = 'Infant mortality (per 1000 births)'
 gdp = 'GDP ($ per capita) dollars'
 
+def preprocess_column(dataframe, column):
+    dataframe[column] = dataframe[column].str.replace(',','.')
+    dataframe[column] = pd.to_numeric(dataframe[column], downcast='float')
+
 # drop rows with missing variables, preprocess columns
 def preprocess(dataframe):
     dataframe = dataframe.dropna()
@@ -25,10 +29,12 @@ def preprocess(dataframe):
             dataframe[column] = dataframe[column].apply(lambda x: x.strip(' dollars'))
             dataframe[column] = pd.to_numeric(dataframe[column])
     # replace commas with dots
-    dataframe[popdens] = dataframe[popdens].str.replace(',','.')
-    dataframe[popdens] = pd.to_numeric(dataframe[popdens], downcast='float')
-    dataframe[infantmort] = dataframe[infantmort].str.replace(',','.')
-    dataframe[infantmort] = pd.to_numeric(dataframe[infantmort], downcast='float')
+    preprocess_column(dataframe, popdens)
+    preprocess_column(dataframe, infantmort)
+    # dataframe[popdens] = dataframe[popdens].str.replace(',','.')
+    # dataframe[popdens] = pd.to_numeric(dataframe[popdens], downcast='float')
+    # dataframe[infantmort] = dataframe[infantmort].str.replace(',','.')
+    # dataframe[infantmort] = pd.to_numeric(dataframe[infantmort], downcast='float')
     dataframe['Region'] = dataframe['Region'].apply(lambda x: x.strip(' '))
     return dataframe
 
@@ -92,7 +98,7 @@ def five_number(list):
 
 # boxplot column of dataframe
 def boxplot(dataframe, column, rows):
-    dataframe.boxplot(column=[column], return_type='axes', positions=[1], notch=True, patch_artist=True)
+    dataframe.boxplot(column=[column], return_type='axes', positions=[1], notch=True, patch_artist=True, grid=False)
     plt.title(f'{column} of {rows} countries')
     plt.ylabel('Number of individuals')
     plt.show()

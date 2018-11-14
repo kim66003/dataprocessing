@@ -45,10 +45,12 @@ def keys_list(dictionary):
 def plot_average(dictionary, list):
     plt.style.use('dark_background')
     lines = plt.plot(*zip(*sorted(dictionary.items())))
-    plt.setp(lines, color='#8211BC', linewidth=2.0, marker='*', mec='#A1F10A', mfc='#A1F10A', markersize=10)
+    plt.setp(lines, color='#8211BC', linewidth=2.0, marker='*', mec='#A1F10A', mfc='#A1F10A', markersize=6)
+    plt.title('Average movie ratings 2008-2017')
     plt.xlabel('Years')
     plt.ylabel('Ratings')
     plt.xticks(range(list[0], (list[-1] + 1)))
+    plt.yticks(range(0, 11))
     plt.show()
 
 if __name__ == "__main__":
