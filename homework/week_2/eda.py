@@ -67,7 +67,7 @@ def outliers(dataframe, column):
 
 # plot histogram
 def hist_plot(dataframe, column, rows):
-    hist_column = df.hist(column, bins=(rows//4), alpha=0.5, grid=False, rwidth=0.9, color='purple', ec='black')
+    hist_column = df.hist(column, bins=(rows//4), alpha=0.6, grid=False, rwidth=0.9, color='purple', ec='black')
     plt.title(f'Distribution of {column} of {rows} countries')
     plt.xlabel(f'{column}')
     plt.ylabel('Frequency')
