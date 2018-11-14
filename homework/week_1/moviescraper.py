@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-# Name:
-# Student number:
+# Name: Kimberley Boersma
+# Student number: 11003464
 """
 This script scrapes IMDB and outputs a CSV file with highest rated movies.
 """

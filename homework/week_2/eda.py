@@ -3,6 +3,7 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 
 # create dataframe for all countries
 def create_dataframe(filename):
@@ -98,9 +99,13 @@ def five_number(list):
 
 # boxplot column of dataframe
 def boxplot(dataframe, column, rows):
-    dataframe.boxplot(column=[column], return_type='axes', positions=[1], notch=True, patch_artist=True, grid=False)
+    ax = sns.boxplot(data=dataframe[column], notch=True, width=0.2, color='purple')
+    for patch in ax.artists:
+        r, g, b, a = patch.get_facecolor()
+        patch.set_facecolor((r, g, b, .5))
     plt.title(f'{column} of {rows} countries')
-    plt.ylabel('Number of individuals')
+    plt.xlabel(f'{rows} countries')
+    plt.ylabel('Number of deaths')
     plt.show()
 
 # convert dataframe to json file
