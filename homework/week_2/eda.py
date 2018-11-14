@@ -32,10 +32,6 @@ def preprocess(dataframe):
     # replace commas with dots
     preprocess_column(dataframe, popdens)
     preprocess_column(dataframe, infantmort)
-    # dataframe[popdens] = dataframe[popdens].str.replace(',','.')
-    # dataframe[popdens] = pd.to_numeric(dataframe[popdens], downcast='float')
-    # dataframe[infantmort] = dataframe[infantmort].str.replace(',','.')
-    # dataframe[infantmort] = pd.to_numeric(dataframe[infantmort], downcast='float')
     dataframe['Region'] = dataframe['Region'].apply(lambda x: x.strip(' '))
     return dataframe
 
