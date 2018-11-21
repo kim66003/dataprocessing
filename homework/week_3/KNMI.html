@@ -11,6 +11,7 @@
 
     <h1 style="font-family: Garamond;">Duration of precipitation (in 0.1 hours) at De Bilt, Netherlands (2016)</h1>
     <canvas id="myCanvas" width="1000" height="1000" style="border: 1px solid #000000;">
+      <a href="http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi">Data Source</a>
     </canvas>
     <script>
     var fileName = "KNMI_20161231.json";
@@ -49,6 +50,7 @@
             chartDrawing(graph)
             axisYDrawing(yAxis, transformAxisY, rangeX, rangeY)
             axisXDrawing(transformAxisX, rangeX, rangeY)
+            information()
         }
     }
     txtFile.open("GET", fileName);
@@ -200,6 +202,15 @@
           ctx.fillText(months[i], transfData[i], rangeY[1] + 10);
         }
       ctx.fillText('Month', rangeX[1] - 50, 480)
+    }
+
+    function information(){
+      const canvas = document.getElementById('myCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.font = '20px serif';
+      ctx.fillText('Dataprocessing: Javascript', 430, 580)
+      ctx.fillText('Kimberley Boersma', 430, 600)
+      ctx.fillText("http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi", 430, 620)
     }
 
 
