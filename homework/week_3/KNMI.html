@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!-- Name: Kimberley Boersma
+     Student no.: 11003464
+     HTML for KNMI data from De Bilt -->
+
+<html>
+  <head>
+    <title>Whale's website</title>
+  </head>
+  <body>
+
+    <h1>Whale's header</h1>
+    <p>Whale's first paragraph</p>
+    <canvas id="myCanvas" width="400" height="400">
+    </canvas>
+    <script>console.log("Hello world!");
+    console.oldLog = console.log;
+    console.log = function(value)
+    {
+        console.oldLog(value);
+        window.$log = value;
+    };
+
+    var fileName = "KNMI_20170101.json";
+    var txtFile = new XMLHttpRequest();
+    txtFile.onreadystatechange = function () {
+        if (txtFile.readyState === 4 && txtFile.status == 200) {
+            printData(JSON.parse(txtFile.responseText))
+        }
+    }
+    txtFile.open("GET", fileName);
+    txtFile.send();
+
+    function printData(data){
+      dates = Object.keys(data)
+      console.log(data)
+      weatherKeys = []
+      arrayFG = []
+      arrayTG = []
+      arraySQ =[]
+      arrayDR = []
+      arrayNG = []
+      dates.forEach(function printValues(date) {
+        keys = Object.keys(data[date])
+        arrayFG.push(data[date]["FG"])
+        arrayTG.push(data[date]["TG"])
+        arraySQ.push(data[date]["SQ"])
+        arrayDR.push(data[date]["DR"])
+        arrayNG.push(data[date]["NG"])
+      });
+      weatherKeys.push(keys)
+      console.log(weatherKeys)
+      console.log(arrayFG)
+      console.log(arrayTG)
+      console.log(arraySQ)
+      console.log(arrayDR)
+      console.log(arrayNG)
+    }
+
+    // Rectangle thingy
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
+    var my_gradient=ctx.createLinearGradient(0,0,220,0);
+    my_gradient.addColorStop(0,"black");
+    my_gradient.addColorStop(0.5,"red");
+    my_gradient.addColorStop(1,"white");
+    ctx.fillStyle=my_gradient;
+    ctx.fillRect(10, 10, 250, 200);
+    void ctx.strokeRect(10, 10, 250, 200);
+    ctx.beginPath();
+    ctx.moveTo(20, 20);
+    ctx.lineWidth = 2;
+    ctx.lineTo(200, 200);
+    ctx.stroke();
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(20, 20);
+    ctx.lineTo(200, 100);
+    ctx.lineTo(300, 20);
+    ctx.lineTo(300, 160);
+    ctx.stroke();
+    ctx.font = '80px serif';
+    ctx.fillText('Hello whale', 40, 110, 200);
+    </script>
+  </body>
+</html>
