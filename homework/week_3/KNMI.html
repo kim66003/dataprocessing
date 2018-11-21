@@ -9,8 +9,8 @@
   </head>
   <body>
 
-    <h1>Duration of precipitation (in 0.1 hours)</h1>
-    <canvas id="myCanvas" width="1000" height="700" style="border: 1px solid #000000;">
+    <h1 style="font-family: Garamond;">Duration of precipitation (in 0.1 hours) at De Bilt, Netherlands (2016)</h1>
+    <canvas id="myCanvas" width="1000" height="1000" style="border: 1px solid #000000;">
     </canvas>
     <script>
     var fileName = "KNMI_20161231.json";
@@ -20,15 +20,18 @@
             data = JSON.parse(txtFile.responseText)
             dates = printDates(data)
             yValues = arrayValues(dates, "DR")
+            console.log(yValues)
             yKeys = weatherArray(data, dates)
             xKeys = arrayDates(dates)
-            rangeY = calcRange(10, 460)
-            rangeX = calcRange(50, 820)
+            rangeY = calcRange(50, 450)
+            rangeX = calcRange(60, 760)
             domainY = calcDomain(yValues)
             console.log(domainY)
             domainX = calcDomain(xKeys)
             transformedX = createTransform(domainX, rangeX, xKeys)
+            console.log(transformedX)
             transformedY = createTransform(domainY, rangeY, yValues)
+            console.log(transformedY)
             months = axisX(xKeys)
             console.log(months)
             domainMonths = calcDomain(months)
@@ -42,7 +45,9 @@
             console.log(transformAxisY)
             graph = lineairGraph(transformedX, transformedY, rangeY)
             console.log(graph)
-            chartDrawing(graph, transformAxisY)
+            gridDrawing(transformAxisY, rangeX, rangeY)
+            chartDrawing(graph)
+            axisYDrawing(yAxis, transformAxisY, rangeX, rangeY)
         }
     }
     txtFile.open("GET", fileName);
@@ -144,30 +149,61 @@
       }
 
     // Rectangle thingy
-    function chartDrawing(data, data2){
+    function chartDrawing(data){
       const canvas = document.getElementById('myCanvas');
       const ctx = canvas.getContext('2d');
-      void ctx.strokeRect(50, 0, 770, 460);
+      void ctx.strokeRect(5, 5, 800, 500);
       ctx.beginPath();
-      // ctx.strokeStyle = #112233
-      ctx.moveTo(data[0]["key"], data[0]["value"]);
+      ctx.strokeStyle = '#8c1bf7'
+      ctx.moveTo(data[0]["key"], (data[0]["value"]) + 40);
 
       data.forEach(function(pair){
-        ctx.lineTo(pair["key"], pair["value"]);
-        ctx.moveTo(pair["key"], pair["value"]);
+        ctx.lineTo(pair["key"], (pair["value"]) + 40);
+        ctx.moveTo(pair["key"], (pair["value"]) + 40);
       })
       ctx.stroke();
-
-      ctx.beginPath();
-      // ctx.moveTo(0, data2[0]);
-      // for (i = 0; i < data2.length; i++) {
-      //     ctx.lineTo(10, data2[i]);
-      //     ctx.moveTo(10, data2[i]);
-      //     };
-      ctx.moveTo(0, 460 - 10)
-      ctx.lineTo(100, 460 - 30)
-      ctx.stroke();
     }
+
+    function gridDrawing(data, rangeX, rangeY){
+      const canvas = document.getElementById('myCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.beginPath();
+      ctx.strokeStyle = '#a8a8a8'
+      for (i = 0; i < data.length; i++) {
+          ctx.moveTo(rangeX[0], rangeY[1] + 40 - data[i]);
+          ctx.lineTo(rangeX[1], rangeY[1] + 40 - data[i]);
+          ctx.stroke();
+          };
+    }
+
+    function axisYDrawing(data, transfData, rangeX, rangeY){
+      const canvas = document.getElementById('myCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.font = '15px serif';
+      for (i = 0; i < data.length; i++) {
+          if (i === 0){
+            ctx.fillText(i, rangeX[0] - 30, rangeY[1] + 40 - transfData[i]);
+            ctx.fillText(Math.floor(data[i]), rangeX[0] - 30, rangeY[1] + 40 - transfData[i+1]);
+          }
+          ctx.fillText(Math.floor(data[i]), rangeX[0] - 30, rangeY[1] + 40 - transfData[i+1]);
+        }
+      ctx.fillText('Duration of precipitation (in 0.1 hours)', rangeX[0] - 40, 20)
+    }
+
+    // function axisXDrawing(data, transfData, rangeX, rangeY){
+    //   const canvas = document.getElementById('myCanvas');
+    //   const ctx = canvas.getContext('2d');
+    //   ctx.font = '15px serif';
+    //   for (i = 0; i < data.length; i++) {
+    //       if (i === 0){
+    //         ctx.fillText(i, rangeX[0] - 30, rangeY[1] + 40 - transfData[i]);
+    //         ctx.fillText(Math.floor(data[i]), rangeX[0] - 30, rangeY[1] + 40 - transfData[i+1]);
+    //       }
+    //       ctx.fillText(Math.floor(data[i]), rangeX[0] - 30, rangeY[1] + 40 - transfData[i+1]);
+    //     }
+    //   ctx.fillText('Duration of precipitation (in 0.1 hours)', rangeX[0] - 40, 20)
+    // }
+
 
     </script>
   </body>
