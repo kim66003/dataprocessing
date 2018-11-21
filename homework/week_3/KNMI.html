@@ -9,96 +9,166 @@
   </head>
   <body>
 
-    <h1>Whale's header</h1>
-    <p>Whale's first paragraph</p>
-    <canvas id="myCanvas" width="400" height="400">
+    <h1>Duration of precipitation (in 0.1 hours)</h1>
+    <canvas id="myCanvas" width="1000" height="700" style="border: 1px solid #000000;">
     </canvas>
-    <script>console.log("Hello world!");
-
+    <script>
     var fileName = "KNMI_20161231.json";
     var txtFile = new XMLHttpRequest();
     txtFile.onreadystatechange = function () {
         if (txtFile.readyState === 4 && txtFile.status == 200) {
-            printData(JSON.parse(txtFile.responseText))
+            data = JSON.parse(txtFile.responseText)
+            dates = printDates(data)
+            yValues = arrayValues(dates, "DR")
+            yKeys = weatherArray(data, dates)
+            xKeys = arrayDates(dates)
+            rangeY = calcRange(10, 460)
+            rangeX = calcRange(50, 820)
+            domainY = calcDomain(yValues)
+            console.log(domainY)
+            domainX = calcDomain(xKeys)
+            transformedX = createTransform(domainX, rangeX, xKeys)
+            transformedY = createTransform(domainY, rangeY, yValues)
+            months = axisX(xKeys)
+            console.log(months)
+            domainMonths = calcDomain(months)
+            console.log(domainMonths)
+            transformAxisX = createTransform(domainMonths, rangeX, months)
+            console.log(transformAxisX)
+            yAxis = axisY(yValues)
+            console.log(yAxis)
+            domainAxisY = calcDomain(yAxis)
+            transformAxisY = createTransform(domainAxisY, rangeY, yAxis)
+            console.log(transformAxisY)
+            graph = lineairGraph(transformedX, transformedY, rangeY)
+            console.log(graph)
+            chartDrawing(graph)
         }
     }
     txtFile.open("GET", fileName);
     txtFile.send();
 
-    function printData(data){
+    function printDates(data){
       dates = Object.keys(data)
-      console.log(data)
-      weatherKeys = []
-      arrayFG = []
-      arrayTG = []
-      arraySQ =[]
-      arrayDR = []
-      arrayNG = []
-      dates.forEach(function printValues(date) {
-        keys = Object.keys(data[date])
-        arrayFG.push(data[date]["FG"])
-        arrayTG.push(data[date]["TG"])
-        arraySQ.push(data[date]["SQ"])
-        arrayDR.push(data[date]["DR"])
-        arrayNG.push(data[date]["NG"])
+      return dates
+    }
+
+    function arrayDates(dates){
+      arrayDays = []
+      count = 0
+      dates.forEach(function(date){
+        arrayDays.push(count)
+        count += 1
       });
-      weatherKeys.push(keys)
-      console.log(weatherKeys)
-      console.log(arrayFG)
-      console.log(arrayTG)
-      console.log(arraySQ)
-      console.log(arrayDR)
-      console.log(arrayNG)
+      return arrayDays
     }
 
-    function createTransform(domain, range){
-  	// domain is a two-element array of the data bounds [domain_min, domain_max]
-  	// range is a two-element array of the screen bounds [range_min, range_max]
-  	// this gives you two equations to solve:
-  	// range_min = alpha * domain_min + beta
-  	// range_max = alpha * domain_max + beta
- 		// a solution would be:
+    function axisX(array){
+      monthsArray = []
+      months = Math.floor(array.length/30)
+      for (i = 0; i < months; i++) {
+          monthsArray.push(i)
+          };
+      return monthsArray
+    }
 
-    var domain_min = domain[0]
-    var domain_max = domain[1]
-    var range_min = range[0]
-    var range_max = range[1]
+    function axisY(array){
+      arrayAxisY = []
+      max = Math.max.apply(null, array)
+      pointsAxisY = Math.floor(max/10)
+      x = pointsAxisY
+      for (i = 0; i < 10; i++) {
+          arrayAxisY.push(x)
+          x += pointsAxisY
+          };
+      return arrayAxisY
+    }
 
-    // formulas to calculate the alpha and the beta
-   	var alpha = (range_max - range_min) / (domain_max - domain_min)
-    var beta = range_max - alpha * domain_max
+    function arrayValues(dates, weather){
+      arrayValues = []
+      dates.forEach(function printValues(date) {
+        value = parseInt(data[date][weather], 10)
+        arrayValues.push(value)
+      });
+      return arrayValues
+    }
 
-    // returns the function for the linear transformation (y= a * x + b)
-    return function(x){
-      return alpha * x + beta;
+    function weatherArray(data, dates){
+      weatherKeys = []
+      dates.forEach(function(date) {
+        x = Object.keys(data[date])
+      });
+      weatherKeys.push(x)
+      return weatherKeys
+    }
+
+    function calcRange(min, max){
+      arrayRange = [min, max]
+      return arrayRange
+    }
+
+    function calcDomain(array){
+      min = Math.min.apply(null, array)
+      max = Math.max.apply(null, array)
+      arrayDomain = [min, max]
+      return arrayDomain
+    }
+
+    function createTransform(domain, range, array){
+      var domain_min = domain[0]
+      var domain_max = domain[1]
+      var range_min = range[0]
+      var range_max = range[1]
+
+      var alpha = (range_max - range_min) / (domain_max - domain_min)
+      var beta = range_max - alpha * domain_max
+
+      arrayY = []
+      for (i = 0; i < array.length; i++) {
+          y = alpha * array[i] + beta
+          arrayY.push(y)
+          };
+      return arrayY
+    }
+
+    function lineairGraph(arrayX, arrayY, range){
+      dictY = []
+      max = range[1]
+      for (i = 0; i < arrayX.length; i++) {
+          dictY.push({
+            key:   arrayX[i],
+            value: (max-(arrayY[i]))
+          });
       }
-    }
+      return dictY;
+      }
 
     // Rectangle thingy
-    const canvas = document.getElementById('myCanvas');
-    const ctx = canvas.getContext('2d');
-    var my_gradient=ctx.createLinearGradient(0,0,220,0);
-    my_gradient.addColorStop(0,"black");
-    my_gradient.addColorStop(0.5,"red");
-    my_gradient.addColorStop(1,"white");
-    ctx.fillStyle=my_gradient;
-    ctx.fillRect(10, 10, 250, 200);
-    void ctx.strokeRect(10, 10, 250, 200);
-    ctx.beginPath();
-    ctx.moveTo(20, 20);
-    ctx.lineWidth = 2;
-    ctx.lineTo(200, 200);
-    ctx.stroke();
-    ctx.lineWidth = 3;
-    ctx.lineJoin = 'round';
-    ctx.beginPath();
-    ctx.moveTo(20, 20);
-    ctx.lineTo(200, 100);
-    ctx.lineTo(300, 20);
-    ctx.lineTo(300, 160);
-    ctx.stroke();
-    ctx.font = '80px serif';
-    ctx.fillText('Hello whale', 40, 110, 200);
+    function chartDrawing(data){
+      const canvas = document.getElementById('myCanvas');
+      const ctx = canvas.getContext('2d');
+      void ctx.strokeRect(50, 0, 770, 460);
+      ctx.beginPath();
+      // ctx.strokeStyle = #112233
+      ctx.moveTo(data[0]["key"], data[0]["value"]);
+
+      data.forEach(function(pair){
+        ctx.lineTo(pair["key"], pair["value"]);
+        ctx.moveTo(pair["key"], pair["value"]);
+      })
+      ctx.stroke();
+
+      ctx.beginPath();
+      // ctx.strokeStyle = #112233
+      ctx.moveTo(data[0]["key"], data[0]["value"]);
+
+      data.forEach(function(pair){
+        ctx.lineTo(pair["key"], pair["value"]);
+        ctx.moveTo(pair["key"], pair["value"]);
+      })
+      ctx.stroke();
+    }
+
     </script>
   </body>
 </html>
