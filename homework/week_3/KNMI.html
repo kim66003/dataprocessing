@@ -42,7 +42,7 @@
             console.log(transformAxisY)
             graph = lineairGraph(transformedX, transformedY, rangeY)
             console.log(graph)
-            chartDrawing(graph)
+            chartDrawing(graph, transformAxisY)
         }
     }
     txtFile.open("GET", fileName);
@@ -144,7 +144,7 @@
       }
 
     // Rectangle thingy
-    function chartDrawing(data){
+    function chartDrawing(data, data2){
       const canvas = document.getElementById('myCanvas');
       const ctx = canvas.getContext('2d');
       void ctx.strokeRect(50, 0, 770, 460);
@@ -159,13 +159,13 @@
       ctx.stroke();
 
       ctx.beginPath();
-      // ctx.strokeStyle = #112233
-      ctx.moveTo(data[0]["key"], data[0]["value"]);
-
-      data.forEach(function(pair){
-        ctx.lineTo(pair["key"], pair["value"]);
-        ctx.moveTo(pair["key"], pair["value"]);
-      })
+      // ctx.moveTo(0, data2[0]);
+      // for (i = 0; i < data2.length; i++) {
+      //     ctx.lineTo(10, data2[i]);
+      //     ctx.moveTo(10, data2[i]);
+      //     };
+      ctx.moveTo(0, 460 - 10)
+      ctx.lineTo(100, 460 - 30)
       ctx.stroke();
     }
 
