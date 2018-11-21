@@ -5,8 +5,8 @@
 import csv
 import json
 
-TEXT_FILE = 'KNMI_20170101.txt'
-OUTPUT_JSON = 'KNMI_20170101.json'
+TEXT_FILE = 'KNMI_20161231.txt'
+OUTPUT_JSON = 'KNMI_20161231.json'
 
 # read textfile and put relevant lines in list
 def read(filename):

@@ -1,19 +1,19 @@
 # BRON: KONINKLIJK NEDERLANDS METEOROLOGISCH INSTITUUT (KNMI)
 # Opmerking: door stationsverplaatsingen en veranderingen in waarneemmethodieken zijn deze tijdreeksen van dagwaarden mogelijk inhomogeen! Dat betekent dat deze reeks van gemeten waarden niet geschikt is voor trendanalyse. Voor studies naar klimaatverandering verwijzen we naar de gehomogeniseerde reeks maandtemperaturen van De Bilt <http://www.knmi.nl/kennis-en-datacentrum/achtergrond/gehomogeniseerde-reeks-maandtemperaturen-de-bilt> of de Centraal Nederland Temperatuur <http://www.knmi.nl/kennis-en-datacentrum/achtergrond/centraal-nederland-temperatuur-cnt>.
-#
-#
+# 
+# 
 # STN      LON(east)   LAT(north)     ALT(m)  NAME
 # 260:         5.180       52.100       1.90  DE BILT
-#
-# YYYYMMDD = Datum (YYYY=jaar MM=maand DD=dag);
-# FG       = Etmaalgemiddelde windsnelheid (in 0.1 m/s);
-# TG       = Etmaalgemiddelde temperatuur (in 0.1 graden Celsius);
-# SQ       = Zonneschijnduur (in 0.1 uur) berekend uit de globale straling (-1 voor <0.05 uur);
-# DR       = Duur van de neerslag (in 0.1 uur);
-# NG       = Etmaalgemiddelde bewolking (bedekkingsgraad van de bovenlucht in achtsten, 9=bovenlucht onzichtbaar);
-#
+# 
+# YYYYMMDD = Datum (YYYY=jaar MM=maand DD=dag); 
+# FG       = Etmaalgemiddelde windsnelheid (in 0.1 m/s); 
+# TG       = Etmaalgemiddelde temperatuur (in 0.1 graden Celsius); 
+# SQ       = Zonneschijnduur (in 0.1 uur) berekend uit de globale straling (-1 voor <0.05 uur); 
+# DR       = Duur van de neerslag (in 0.1 uur); 
+# NG       = Etmaalgemiddelde bewolking (bedekkingsgraad van de bovenlucht in achtsten, 9=bovenlucht onzichtbaar); 
+# 
 # STN,YYYYMMDD,   FG,   TG,   SQ,   DR,   NG
-#
+# 
   260,20160101,   30,   41,    0,    0,    7
   260,20160102,   57,   54,    3,   70,    8
   260,20160103,   56,   69,   20,  112,    8
@@ -380,4 +380,3 @@
   260,20161229,   18,  -22,    0,    0,    8
   260,20161230,   22,  -11,    6,    0,    8
   260,20161231,   34,   18,    0,    5,    8
-  260,20170101,   39,    5,    0,   50,    8
