@@ -48,6 +48,7 @@
             gridDrawing(transformAxisY, rangeX, rangeY)
             chartDrawing(graph)
             axisYDrawing(yAxis, transformAxisY, rangeX, rangeY)
+            axisXDrawing(transformAxisX, rangeX, rangeY)
         }
     }
     txtFile.open("GET", fileName);
@@ -70,7 +71,7 @@
 
     function axisX(array){
       monthsArray = []
-      months = Math.floor(array.length/30)
+      months = Math.floor(array.length/28)
       for (i = 0; i < months; i++) {
           monthsArray.push(i)
           };
@@ -190,19 +191,16 @@
       ctx.fillText('Duration of precipitation (in 0.1 hours)', rangeX[0] - 40, 20)
     }
 
-    // function axisXDrawing(data, transfData, rangeX, rangeY){
-    //   const canvas = document.getElementById('myCanvas');
-    //   const ctx = canvas.getContext('2d');
-    //   ctx.font = '15px serif';
-    //   for (i = 0; i < data.length; i++) {
-    //       if (i === 0){
-    //         ctx.fillText(i, rangeX[0] - 30, rangeY[1] + 40 - transfData[i]);
-    //         ctx.fillText(Math.floor(data[i]), rangeX[0] - 30, rangeY[1] + 40 - transfData[i+1]);
-    //       }
-    //       ctx.fillText(Math.floor(data[i]), rangeX[0] - 30, rangeY[1] + 40 - transfData[i+1]);
-    //     }
-    //   ctx.fillText('Duration of precipitation (in 0.1 hours)', rangeX[0] - 40, 20)
-    // }
+    function axisXDrawing(transfData, rangeX, rangeY){
+      const canvas = document.getElementById('myCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.font = '15px serif';
+      months = ['1 Jan', '1 Feb', '1 Mar', '1 Apr', '1 May', '1 Jun', '1 Jul', '1 Aug', '1 Sep', '1 Oct', '1 Nov', '1 Dec']
+      for (i = 0; i < months.length; i++) {
+          ctx.fillText(months[i], transfData[i], rangeY[1] + 10);
+        }
+      ctx.fillText('Month', rangeX[1] - 50, 480)
+    }
 
 
     </script>
