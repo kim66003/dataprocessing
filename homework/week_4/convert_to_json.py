@@ -8,7 +8,7 @@ OUTPUT_FILE = "childvaccination.json"
 
 # create dataframe
 def create_dataframe(filename):
-    dataframe = pd.read_csv(filename, usecols=["LOCATION","SUBJECT","TIME"])
+    dataframe = pd.read_csv(filename, usecols=["LOCATION","SUBJECT","TIME", "Value"])
     return dataframe
 
 def preprocess(dataframe):

@@ -18,18 +18,46 @@
           txtFile.onreadystatechange = function() {
               if (txtFile.readyState === 4 && txtFile.status == 200) {
                   data = JSON.parse(txtFile.responseText);
-                  console.log(data)
-                  keys = Object.keys(data)
-                  keys.forEach(function(key) {
-                  values = data[key];
-                  console.log(values)
-                  x = Object.keys(values)
-                  console.log(x)
-                  });
+                  index = indexKeys(data)
+                  console.log(index)
+                  keys = returnKeys(data, index)
+                  console.log(keys)
+                  y = returnValues(data, keys[3])
+                  console.log(y)
+                  d3.select("body").selectAll("p")
+            			.data(keys)
+            			.enter()
+            			.append("p")
+            			.text("New paragraph!");
+                  console.log(d3.selectAll("p"))
+
           }
         }
           txtFile.open("GET", fileName);
           txtFile.send();
+
+          function indexKeys(data){
+              keys = Object.keys(data)
+              return keys
+          };
+
+          function returnKeys(data, keys){
+              keys.forEach(function(key) {
+              values = data[key];
+              arrayKeys = Object.keys(values)
+              });
+              return arrayKeys
+          };
+
+          function returnValues(data, column){
+            keys = indexKeys(data)
+            arrayValues = []
+            keys.forEach(function(key){
+              arrayValues.push(data[key][column])
+            });
+            return arrayValues
+          };
+
 		    </script>
     </body>
 </html>
