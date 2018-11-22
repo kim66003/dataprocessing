@@ -23,7 +23,7 @@
             data = JSON.parse(txtFile.responseText)
             dates = printDates(data)
             yKeys = weatherArray(data, dates)
-            yValues = arrayValues(dates, yKeys[3])
+            yValues = arrayValues(dates, yKeys[0][3])
             xKeys = arrayDates(dates)
             // Calculate range and domain of X and Y
             rangeY = calcRange(50, 450)
@@ -224,7 +224,7 @@
       ctx.fillText('Dataprocessing: Javascript', 430, 580)
       ctx.fillText('Kimberley Boersma', 430, 600)
       ctx.fillText("http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi", 430, 620)
-    }
+      }
 
     </script>
   </body>
