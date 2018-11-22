@@ -6,11 +6,12 @@ body {
 p {
     font-size: 15px;
     line-height: 15px;
-    color: black;
+    color: #310072;
     font-family: georgia;
 }
 
 h1 {
-  font-family: georgia;
+  font-family: verdana;
   font-size: 26px;
+  color: #310072
 }

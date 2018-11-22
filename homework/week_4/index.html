@@ -20,9 +20,14 @@
                   data = JSON.parse(txtFile.responseText);
                   console.log(data)
                   keys = Object.keys(data)
-                  console.log(keys[0][0])
-              }
+                  keys.forEach(function(key) {
+                  values = data[key];
+                  console.log(values)
+                  x = Object.keys(values)
+                  console.log(x)
+                  });
           }
+        }
           txtFile.open("GET", fileName);
           txtFile.send();
 		    </script>

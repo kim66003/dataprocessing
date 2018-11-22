@@ -187,6 +187,11 @@
           ctx.lineTo(rangeX[1], rangeY[1] + 40 - data[i]);
           ctx.stroke();
           };
+      d3.select("body").selectAll("p")
+			.data(data)
+			.enter()
+			.append("p")
+			.text("New paragraph!");
     }
 
     function axisYDrawing(data, transfData, rangeX, rangeY){
