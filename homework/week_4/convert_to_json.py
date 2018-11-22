@@ -4,7 +4,7 @@ import pandas as pd
 
 INPUT_FILE = "childvaccination.csv"
 OUTPUT_DF = "dataframe.csv"
-OUTPUT_FILE = "childvaccination.json"
+OUTPUT_FILE = "vaccination.json"
 
 # create dataframe
 def create_dataframe(filename):

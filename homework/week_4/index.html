@@ -13,7 +13,7 @@
           d3.select("body").append("p").text("Kimberley Boersma")
           d3.select("body").append("p").text("11003464")
 
-          var fileName = "childvaccination.json";
+          var fileName = "vaccination.json";
           var txtFile = new XMLHttpRequest();
           txtFile.onreadystatechange = function() {
               if (txtFile.readyState === 4 && txtFile.status == 200) {
@@ -22,14 +22,30 @@
                   console.log(index)
                   keys = returnKeys(data, index)
                   console.log(keys)
-                  y = returnValues(data, keys[3])
+                  y = returnValues(index, keys[3])
                   console.log(y)
                   d3.select("body").selectAll("p")
-            			.data(keys)
+            			.data(y)
             			.enter()
             			.append("p")
-            			.text("New paragraph!");
+            			.text(function(d) { return "Percentage of vaccinated children: " + d; })
+                  .style("color", function(d) {
+                    if (d > 98) {   //Threshold of 15
+                        return "#009109";
+                    } else {
+                        return "black";
+                    }
+                });
                   console.log(d3.selectAll("p"))
+                  d3.select("body").selectAll("div")
+                  .data(y)
+                  .enter()
+                  .append("div")
+                  .attr("class", "bar")
+                  .style("height", function(d) {
+                    var barHeight = d * 1.5;  //Scale up by factor of 2
+                    return barHeight + "px";
+                  });
 
           }
         }
@@ -49,8 +65,7 @@
               return arrayKeys
           };
 
-          function returnValues(data, column){
-            keys = indexKeys(data)
+          function returnValues(keys, column){
             arrayValues = []
             keys.forEach(function(key){
               arrayValues.push(data[key][column])

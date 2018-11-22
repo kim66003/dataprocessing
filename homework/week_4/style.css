@@ -1,6 +1,12 @@
 body {
-    background-color: #bba2db;
+    background-color: #d9ccea;
     color: black;
+}
+
+h1 {
+  font-family: verdana;
+  font-size: 26px;
+  color: #310072
 }
 
 p {
@@ -10,8 +16,10 @@ p {
     font-family: georgia;
 }
 
-h1 {
-  font-family: verdana;
-  font-size: 26px;
-  color: #310072
+div.bar {
+    display: inline-block;
+    width: 15px;
+    height: 75px;   /* We'll override this later */
+    background-color: purple;
+    margin-right: 2px;
 }
