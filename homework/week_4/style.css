@@ -1,0 +1,16 @@
+body {
+    background-color: #bba2db;
+    color: black;
+}
+
+p {
+    font-size: 15px;
+    line-height: 15px;
+    color: black;
+    font-family: georgia;
+}
+
+h1 {
+  font-family: georgia;
+  font-size: 26px;
+}
