@@ -14,40 +14,39 @@
       <a href="http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi">Data Source</a>
     </canvas>
     <script>
+    // XMLHttpRequest of JSON file
     var fileName = "KNMI_20161231.json";
     var txtFile = new XMLHttpRequest();
     txtFile.onreadystatechange = function () {
         if (txtFile.readyState === 4 && txtFile.status == 200) {
+            // Put JSON data, X values and Y values in arrays
             data = JSON.parse(txtFile.responseText)
             dates = printDates(data)
-            yValues = arrayValues(dates, "DR")
-            console.log(yValues)
             yKeys = weatherArray(data, dates)
+            yValues = arrayValues(dates, yKeys[3])
             xKeys = arrayDates(dates)
+            // Calculate range and domain of X and Y
             rangeY = calcRange(50, 450)
             rangeX = calcRange(60, 760)
             domainY = calcDomain(yValues)
-            console.log(domainY)
             domainX = calcDomain(xKeys)
+            // Transform X values and Y values
             transformedX = createTransform(domainX, rangeX, xKeys)
-            console.log(transformedX)
             transformedY = createTransform(domainY, rangeY, yValues)
-            console.log(transformedY)
+            // Calculate range and domain for X and Y ticks
             months = axisX(xKeys)
-            console.log(months)
             domainMonths = calcDomain(months)
-            console.log(domainMonths)
-            transformAxisX = createTransform(domainMonths, rangeX, months)
-            console.log(transformAxisX)
             yAxis = axisY(yValues)
-            console.log(yAxis)
             domainAxisY = calcDomain(yAxis)
+            // Transform X and Y ticks arrays
+            transformAxisX = createTransform(domainMonths, rangeX, months)
             transformAxisY = createTransform(domainAxisY, rangeY, yAxis)
-            console.log(transformAxisY)
+            // Create dictionary with transformed X and Y values
             graph = lineairGraph(transformedX, transformedY, rangeY)
-            console.log(graph)
+            // Draw grid for chart and draw chart
             gridDrawing(transformAxisY, rangeX, rangeY)
             chartDrawing(graph)
+            // Draw X and Y axis ticks
             axisYDrawing(yAxis, transformAxisY, rangeX, rangeY)
             axisXDrawing(transformAxisX, rangeX, rangeY)
             information()
@@ -57,11 +56,13 @@
     txtFile.send();
 
     function printDates(data){
+      // Returns the dates (20160101 - 20163112) of dataset
       dates = Object.keys(data)
       return dates
     }
 
     function arrayDates(dates){
+      // Returns array of length of the dates (0-365)
       arrayDays = []
       count = 0
       dates.forEach(function(date){
@@ -72,6 +73,7 @@
     }
 
     function axisX(array){
+      // Returns array of month numbers (0-12) for X ticks
       monthsArray = []
       months = Math.floor(array.length/28)
       for (i = 0; i < months; i++) {
@@ -81,6 +83,7 @@
     }
 
     function axisY(array){
+      // Returns array of Y tick values
       arrayAxisY = []
       max = Math.max.apply(null, array)
       pointsAxisY = Math.floor(max/10)
@@ -93,6 +96,7 @@
     }
 
     function arrayValues(dates, weather){
+      // Returns array Y values of chosen weather condition
       arrayValues = []
       dates.forEach(function printValues(date) {
         value = parseInt(data[date][weather], 10)
@@ -102,6 +106,7 @@
     }
 
     function weatherArray(data, dates){
+      // Returns array of weather condition names (FG, TG, SQ, DR, NG)
       weatherKeys = []
       dates.forEach(function(date) {
         x = Object.keys(data[date])
@@ -111,11 +116,13 @@
     }
 
     function calcRange(min, max){
+      // Returns array of length 2 of given canvas width and height
       arrayRange = [min, max]
       return arrayRange
     }
 
     function calcDomain(array){
+      // Returns min and max value of array
       min = Math.min.apply(null, array)
       max = Math.max.apply(null, array)
       arrayDomain = [min, max]
@@ -123,6 +130,7 @@
     }
 
     function createTransform(domain, range, array){
+      // Transforms X or Y values to x and y screen coordinates
       var domain_min = domain[0]
       var domain_max = domain[1]
       var range_min = range[0]
@@ -140,6 +148,7 @@
     }
 
     function lineairGraph(arrayX, arrayY, range){
+      // Returns dictionary of transformed X and Y values
       dictY = []
       max = range[1]
       for (i = 0; i < arrayX.length; i++) {
@@ -151,8 +160,8 @@
       return dictY;
       }
 
-    // Rectangle thingy
     function chartDrawing(data){
+      // Chart of weather condition
       const canvas = document.getElementById('myCanvas');
       const ctx = canvas.getContext('2d');
       void ctx.strokeRect(5, 5, 800, 500);
@@ -168,6 +177,7 @@
     }
 
     function gridDrawing(data, rangeX, rangeY){
+      // Grid of horizontal lines
       const canvas = document.getElementById('myCanvas');
       const ctx = canvas.getContext('2d');
       ctx.beginPath();
@@ -180,6 +190,7 @@
     }
 
     function axisYDrawing(data, transfData, rangeX, rangeY){
+      // Draws Y axis tick names
       const canvas = document.getElementById('myCanvas');
       const ctx = canvas.getContext('2d');
       ctx.font = '15px serif';
@@ -194,6 +205,7 @@
     }
 
     function axisXDrawing(transfData, rangeX, rangeY){
+      // Draws X axis tick names
       const canvas = document.getElementById('myCanvas');
       const ctx = canvas.getContext('2d');
       ctx.font = '15px serif';
@@ -205,6 +217,7 @@
     }
 
     function information(){
+      // Puts information of me on mycanvas
       const canvas = document.getElementById('myCanvas');
       const ctx = canvas.getContext('2d');
       ctx.font = '20px serif';
@@ -212,7 +225,6 @@
       ctx.fillText('Kimberley Boersma', 430, 600)
       ctx.fillText("http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi", 430, 620)
     }
-
 
     </script>
   </body>
