@@ -23,10 +23,32 @@
           var w = 1200;
           var h = 220;
           var barPadding = 1;
-          var svg = body
-            .append("svg")
-            .attr("width", w)
-            .attr("height", h);
+          // var svg = body
+          //   .append("svg")
+          //   .attr("width", w)
+          //   .attr("height", h);
+            var margin = {
+                          top: 20,
+                          left: 50,
+                          right: 30,
+                          bottom: 30
+                        };
+              var barwidth = 80
+              var padding = 5
+              var svg = d3.select("body")
+                          .append("svg")
+                          .attr("width", w)
+                          .attr("height", h)
+                          .attr("transform", "translate(" + margin.top + "," + margin.left + ")");
+              w_domain = w - margin.left - margin.right;
+              h_domain = h - margin.top - margin.bottom;
+
+            var yscale = d3.scaleLinear()
+              .range([h_domain, 0])
+              .domain([0, 35]);
+            var xscale = d3.scaleBand()
+              .range([0, w_domain])
+              .padding(0.1);
 
           var fileName = "childvaccination.json";
           var txtFile = new XMLHttpRequest();
@@ -34,6 +56,7 @@
               if (txtFile.readyState === 4 && txtFile.status == 200) {
                   data = JSON.parse(txtFile.responseText);
                   execute(data)
+                  make_axis()
                   barchart(percentage)
           }
         }
@@ -73,6 +96,16 @@
             percentage = returnValues(index, keys[2])
             console.log(percentage)
           }
+
+          function make_axis(){
+        var xaxis = d3.axisBottom(xscale);
+
+        var yaxis = d3.axisLeft(yscale);
+
+        svg.append('g')
+            .attr('transform', 'translate('+[0, h_domain]+')')
+            .attr('class', 'x axis')
+            .call(xaxis);}
 
           function barchart(dataset){
             var rectangles = svg.selectAll("rect")
