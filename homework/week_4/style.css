@@ -1,25 +1,43 @@
 body {
-    background-color: #d9ccea;
+    background-color: #f1e5ff;
     color: black;
 }
 
 h1 {
   font-family: verdana;
   font-size: 26px;
-  color: #310072
+  color: #34105e;
 }
 
 p {
-    font-size: 15px;
+    font-size: 18px;
     line-height: 15px;
-    color: #310072;
+    color: #34105e;
     font-family: georgia;
+}
+
+p1 {
+    font-size: 17px;
+    line-height: 10px;
+    color: #160628;
+    font-family: sans-serif;
+    display: block;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 div.bar {
     display: inline-block;
     width: 15px;
     height: 75px;   /* We'll override this later */
-    background-color: purple;
+    background-color: #ce84b0;
     margin-right: 2px;
+}
+
+svg .lollipop {
+    fill: #ce84b0;
+    stroke-width: 3;
+    opacity: 0.8;
 }

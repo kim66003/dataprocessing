@@ -9,44 +9,32 @@
     <body>
       <!-- This is where your bar chart will go -->
         <script type="text/javascript">
-  		    d3.select("body").append("h1").text("Child vaccination Europe");
-          d3.select("body").append("p").text("Kimberley Boersma")
-          d3.select("body").append("p").text("11003464")
+          var body = d3.select("body")
+          body
+            .append("h1")
+            .text("Child vaccination Europe");
+          body
+            .append("p")
+            .html("Kimberley Boersma <br> 11003464")
+          body
+            .append("p")
+            .html("The dataset contains the child vaccination rates for several countries. <br>I'd like to visualize this data with a bar chart taking the average of all the vaccination types for 2016 for every country.")
 
-          var fileName = "vaccination.json";
+          var w = 1200;
+          var h = 220;
+          var barPadding = 1;
+          var svg = body
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+
+          var fileName = "childvaccination.json";
           var txtFile = new XMLHttpRequest();
           txtFile.onreadystatechange = function() {
               if (txtFile.readyState === 4 && txtFile.status == 200) {
                   data = JSON.parse(txtFile.responseText);
-                  index = indexKeys(data)
-                  console.log(index)
-                  keys = returnKeys(data, index)
-                  console.log(keys)
-                  y = returnValues(index, keys[3])
-                  console.log(y)
-                  d3.select("body").selectAll("p")
-            			.data(y)
-            			.enter()
-            			.append("p")
-            			.text(function(d) { return "Percentage of vaccinated children: " + d; })
-                  .style("color", function(d) {
-                    if (d > 98) {   //Threshold of 15
-                        return "#009109";
-                    } else {
-                        return "black";
-                    }
-                });
-                  console.log(d3.selectAll("p"))
-                  d3.select("body").selectAll("div")
-                  .data(y)
-                  .enter()
-                  .append("div")
-                  .attr("class", "bar")
-                  .style("height", function(d) {
-                    var barHeight = d * 1.5;  //Scale up by factor of 2
-                    return barHeight + "px";
-                  });
-
+                  execute(data)
+                  barchart(percentage)
           }
         }
           txtFile.open("GET", fileName);
@@ -72,6 +60,42 @@
             });
             return arrayValues
           };
+
+          function execute(data){
+            index = indexKeys(data)
+            console.log(index)
+            keys = returnKeys(data, index)
+            console.log(keys)
+            countries = returnValues(index, keys[0])
+            console.log(countries)
+            years = returnValues(index, keys[1])
+            console.log(years)
+            percentage = returnValues(index, keys[2])
+            console.log(percentage)
+          }
+
+          function barchart(dataset){
+            var rectangles = svg.selectAll("rect")
+                   .data(dataset)
+                   .enter()
+                   .append("rect")
+
+            rectangles
+               .attr("x",  function(d, i) {
+               return (i * (w / dataset.length));
+                 })
+               .attr("y", function(d) {
+                  return h - (d * 2);  //Height minus data value
+                  })
+               .attr("width", ((w / dataset.length) - barPadding))
+               .attr("height", function(d) {
+                 var barHeight = d * 2;
+                 return barHeight;
+               })
+               .attr("fill", function(d) {
+                return "rgb(" + (d * 1.8) + "," + (d * 0.8) + "," + (d * 2.5) + ")";
+            });
+          }
 
 		    </script>
     </body>

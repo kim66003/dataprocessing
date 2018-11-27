@@ -4,7 +4,7 @@ import pandas as pd
 
 INPUT_FILE = "childvaccination.csv"
 OUTPUT_DF = "dataframe.csv"
-OUTPUT_FILE = "vaccination.json"
+OUTPUT_FILE = "childvaccination.json"
 
 # create dataframe
 def create_dataframe(filename):
@@ -13,7 +13,10 @@ def create_dataframe(filename):
 
 def preprocess(dataframe):
     dataframe = dataframe.dropna()
-    dataframe = dataframe.sort_values(['TIME'],ascending=True)
+    dataframe = dataframe[(dataframe['TIME']==2016)]
+    dataframe = dataframe.groupby('LOCATION').mean().reset_index()
+    dataframe[('TIME')] = dataframe[('TIME')].astype(int)
+    dataframe[('Value')] = dataframe[('Value')].astype(int)
     return dataframe
 
 # save dataframe to csv outfile
