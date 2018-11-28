@@ -59,24 +59,22 @@
                 .text("Percentage");
             }
 
-          var fileName = "childvaccination.json";
-          var txtFile = new XMLHttpRequest();
-          txtFile.onreadystatechange = function() {
-              if (txtFile.readyState === 4 && txtFile.status == 200) {
-                  data = JSON.parse(txtFile.responseText);
-        }
-      }
-          txtFile.open("GET", fileName);
-          txtFile.send();
-
           d3.json("childvaccination.json")
           .then(function(data){
             values = Object.values(data)
+            keys = Object.keys(values)
+            columns = []
+            keys.forEach(function(key) {
+            columns = Object.keys(values[key]);
+            });
+            countries = []
+            keys.forEach(function(key){
+              countries.push(values[key][columns[0]])
+            });
             axistitles()
             barchart(values)
-            // barlabels(values)
-            execute(values)
             make_axis(countries)
+
 
           })
 
