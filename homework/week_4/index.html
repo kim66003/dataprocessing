@@ -12,20 +12,13 @@
           var body = d3.select("body")
           body
             .append("h1")
-            .text("Child vaccination Europe");
+            .text("Child vaccination Europe 2016");
           body
             .append("p")
             .html("Kimberley Boersma <br> 11003464")
           body
             .append("p")
             .html("The dataset contains the child vaccination rates for several countries. <br>I'd like to visualize this data with a bar chart taking the average of all the vaccination types for 2016 for every country.")
-
-          // var tip = d3.tip()
-          //   .attr('class', 'd3-tip')
-          //   .offset([-10, 0])
-          //   .html(function(d) {
-          //     return "<strong>Frequency:</strong> <span style='color:red'>" + d.Value + "</span>";
-          //   })
 
           var w = 1200;
           var h = 300;
@@ -50,6 +43,20 @@
           var xscale = d3.scaleLinear()
             .range([margin.left, w - margin.right])
             .domain([0, 44]);
+
+            svg.append("text")
+                .attr("transform",
+                      'translate('+[w_domain/2, h - 5]+')')
+                .style("text-anchor", "middle")
+                .text("Country");
+
+            svg.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 0)
+                .attr("x",0 - (h / 2))
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .text("Percentage");
 
           var fileName = "childvaccination.json";
           var txtFile = new XMLHttpRequest();
@@ -123,8 +130,6 @@
                    return xscale(i);
                      })
                    .attr("y", function(d) {
-                     console.log(yscale(d));
-                     console.log(d);
                      return yscale(d);
                       })
                    .attr("width", ((w_domain / dataset.length) - barPadding))
@@ -133,7 +138,7 @@
                      return h - margin.bottom - yscale(d);
                    })
                    .attr("fill", function(d) {
-                    return "rgb(" + (d * 1.8) + "," + (d * 1.0) + "," + (d * 2.5) + ")";
+                    return "rgb(" + (d * 1.8) + "," + (d * 1.1) + "," + (d * 2.5) + ")";
                 });
           }
 
