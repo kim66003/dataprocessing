@@ -23,11 +23,12 @@
           var w = 1200;
           var h = 300;
           var barPadding = 1;
+          var factor = 1
           var margin = {
-                        top: 20,
+                        top: 30,
                         left: 50,
-                        right: 30,
-                        bottom: 30
+                        right: 20,
+                        bottom: 40
                       };
             var svg = body
                         .append("svg")
@@ -37,11 +38,13 @@
             h_domain = h - margin.top - margin.bottom;
 
           var yscale = d3.scaleLinear()
-            .range([(h - margin.bottom), margin.top])
+            .range([margin.top, (h - margin.bottom)]).clamp(true)
             .domain([0, 100]);
+          console.log(yscale(100))
           var xscale = d3.scaleLinear()
             .range([margin.left, w - margin.right])
             .domain([0, 44]);
+          console.log(xscale(40))
 
           var fileName = "childvaccination.json";
           var txtFile = new XMLHttpRequest();
@@ -51,6 +54,7 @@
                   execute(data)
                   make_axis()
                   barchart(percentage)
+                  console.log(percentage)
                   barlabels(percentage)
 
         }
@@ -88,18 +92,24 @@
           }
 
           function make_axis(){
+            var yscale2 = d3.scaleLinear()
+              .range([(h - margin.bottom), margin.top]).clamp(true)
+              .domain([0, 100]);
+
             var xaxis = d3.axisBottom(xscale);
 
-            var yaxis = d3.axisLeft(yscale);
+            var yaxis = d3.axisLeft(yscale2);
 
             svg.append('g')
-                .attr('transform', 'translate('+[0, h_domain]+')')
+                .attr('transform', 'translate('+[0, (h - margin.bottom)]+')')
                 .attr('class', 'x axis')
                 .call(xaxis);
 
             svg.append('g')
+              .attr('transform', 'translate('+[margin.left - 1, 0]+')')
              .attr('class', 'y axis')
              .call(yaxis);
+           }
 
 
           function barchart(dataset){
@@ -112,12 +122,12 @@
                    // (i * (w_domain / dataset.length));
                      })
                    .attr("y", function(d) {
-                      return h - margin.bottom - 60 - yscale(d);
+                      return (h - margin.bottom) - (yscale(d) * factor);
                       // h_domain - (d * 2);  //Height minus data value
                       })
                    .attr("width", ((w_domain / dataset.length) - barPadding))
                    .attr("height", function(d) {
-                     var barHeight = yscale(d) * 3;
+                     var barHeight = yscale(d) * factor;
                      return barHeight;
                    })
                    .attr("fill", function(d) {
@@ -126,28 +136,26 @@
           }
 
           function barlabels(dataset){
-            count = 0
             svg.selectAll("text")
                .data(dataset)
                .enter()
                .append("text")
                .text(function(d) {
-                  count += 1
                   return d;
                })
                .attr("text-anchor", "middle")
                .attr("x", function(d, i) {
-                  return (i * (w_domain / dataset.length) + (w_domain / dataset.length - barPadding) / 3);
-                  // i * (w_domain / dataset.length) + (w_domain / dataset.length - barPadding) / 2;
+                  return xscale(i) + 11;
                })
                .attr("y", function(d) {
-                  return h_domain - (d * 2) + 14;
-                  // h_domain - (d * 4) + 14;
+                  return (h - margin.bottom) - (yscale(d)) + 14;
                })
                .attr("font-family", "sans-serif")
                .attr("font-size", "11px")
                .attr("fill", "black");
+               console.log(dataset)
                 }
+
 
 
 
