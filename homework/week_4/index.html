@@ -75,7 +75,6 @@
             barchart(values)
             make_axis(countries)
 
-
           })
 
           function indexKeys(data){
@@ -145,10 +144,18 @@
                     return "rgb(" + (d.Value * 1.8) + "," + (d.Value * 1.1) + "," + (d.Value * 2.5) + ")";
                     })
                     .on("mouseover", function(){
-                        tooltip.style("display", null);
+                        d3.select(this)
+                          .attr("fill", function(d) {
+                          return "rgb(" + (d.Value * 2) + "," + 230 + "," + (d.Value * 0.5) + ")";
+                })
+              tooltip.style("display", null);
                     })
                     .on("mouseout", function(){
-                        tooltip.style("display", "none");
+                        d3.select(this)
+                          .attr("fill", function(d) {
+                            return "rgb(" + (d.Value * 1.8) + "," + (d.Value * 1.1) + "," + (d.Value * 2.5) + ")";
+                          })
+                          tooltip.style("display", "none");
                     })
                     .on("mousemove", function(d){
                         var xPos = d3.mouse(this)[0] - 15;
