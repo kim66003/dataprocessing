@@ -7,8 +7,8 @@
         <script type="text/javascript" src="d3/d3.js"></script>
     </head>
     <body>
-      <!-- This is where your bar chart will go -->
         <script type="text/javascript">
+          // information about bar chart
           var body = d3.select("body")
           body
             .append("h1")
@@ -18,24 +18,27 @@
             .html("Kimberley Boersma <br> 11003464")
           body
             .append("p")
-            .html("The dataset contains the child vaccination rates for several countries. <br>I'd like to visualize this data with a bar chart taking the average of all the vaccination types for 2016 for every country.")
+            .html("The graph below shows the the child vaccination rates per country for the year 2016. <br>The average of different types of vaccinations has been calculated and shown in the graph.")
 
-          var w = 1200;
+          // set width, height and margins of svg
+          var w = 1230;
           var h = 300;
           var barPadding = 1;
           var factor = 1
           var margin = {
                         top: 30,
                         left: 50,
-                        right: 20,
+                        right: 30,
                         bottom: 40
                       };
           w_domain = w - margin.left - margin.right;
           h_domain = h - margin.top - margin.bottom;
+
+          // create svg
           var svg = body.append("svg")
                       .attr("width", w)
                       .attr("height", h);
-
+          // set x- and yscale
           var yscale = d3.scaleLinear()
             .range([(h - margin.bottom), margin.top]).clamp(true)
             .domain([0, 100]);
@@ -43,6 +46,7 @@
             .range([margin.left, w - margin.right])
             .domain([0, 44]);
 
+          // axis titles country and percentage for barchart
           function axistitles(){
             svg.append("text")
                 .attr("transform",
@@ -59,9 +63,21 @@
                 .text("Percentage");
             }
 
+          // load in json file, execute all functions
           d3.json("childvaccination.json")
           .then(function(data){
+            // dictionary with data
             values = Object.values(data)
+            // array of countries
+            countries = execute(values)
+            // set axis titles, create barchart and set axis and values
+            axistitles()
+            barchart(values)
+            make_axis(countries)
+          })
+
+          // returns array of countries
+          function execute(data){
             keys = Object.keys(values)
             columns = []
             keys.forEach(function(key) {
@@ -71,39 +87,10 @@
             keys.forEach(function(key){
               countries.push(values[key][columns[0]])
             });
-            axistitles()
-            barchart(values)
-            make_axis(countries)
-
-          })
-
-          function indexKeys(data){
-              keys = Object.keys(data)
-              return keys
-          };
-
-          function returnKeys(data, keys){
-              keys.forEach(function(key) {
-              values = data[key];
-              arrayKeys = Object.keys(values)
-              });
-              return arrayKeys
-          };
-
-          function returnValues(keys, column){
-            arrayValues = []
-            keys.forEach(function(key){
-              arrayValues.push(data[key][column])
-            });
-            return arrayValues
-          };
-
-          function execute(data){
-            index = indexKeys(data)
-            keys = returnKeys(data, index)
-            countries = returnValues(index, keys[0])
+            return countries
           }
 
+          // makes x and y axis
           function make_axis(countries){
             xscale2 = d3.scaleBand()
               .domain(countries)
@@ -123,8 +110,9 @@
              .call(yaxis);
            }
 
-
+           // creates barchart
           function barchart(dataset){
+            // create rectangles
             var rectangles = svg.selectAll("rect")
                    .data(dataset)
                    .enter()
@@ -143,12 +131,13 @@
                    .attr("fill", function(d) {
                     return "rgb(" + (d.Value * 1.8) + "," + (d.Value * 1.1) + "," + (d.Value * 2.5) + ")";
                     })
+                    // change color and show info when you hover over bars with mouse
                     .on("mouseover", function(){
                         d3.select(this)
                           .attr("fill", function(d) {
                           return "rgb(" + (d.Value * 2) + "," + 230 + "," + (d.Value * 0.5) + ")";
                 })
-              tooltip.style("display", null);
+                          tooltip.style("display", null);
                     })
                     .on("mouseout", function(){
                         d3.select(this)
@@ -174,7 +163,7 @@
                           .style("font-size", "1.0em")
                           .attr("font-weight", "bold")
           }
-
+          // create barlabels
           function barlabels(dataset){
                  svg.selectAll("text", "barlabels")
                    .data(dataset)
