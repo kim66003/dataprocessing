@@ -33,3 +33,21 @@ svg .lollipop {
     stroke-width: 3;
     opacity: 0.8;
 }
+
+.graph{
+  width: auto;
+}
+
+.tooltip {
+  text-decoration: underline;
+}
+
+.axis{
+  font: 10px sans-serif;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #5a13ad;
+  shape-rendering: crispEdges;
+}
