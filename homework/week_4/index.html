@@ -57,10 +57,9 @@
               if (txtFile.readyState === 4 && txtFile.status == 200) {
                   data = JSON.parse(txtFile.responseText);
                   execute(data)
-                  barchart(percentage)
+                  barchart(percentage, countries)
                   barlabels(percentage)
                   make_axis(countries)
-
         }
       }
           txtFile.open("GET", fileName);
@@ -96,9 +95,11 @@
           }
 
           function make_axis(countries){
-            console.log(countries)
-            var xaxis = d3.axisBottom(xscale);
+            xscale2 = d3.scaleBand()
+              .domain(countries)
+              .range([margin.left, w - margin.right])
 
+            var xaxis = d3.axisBottom(xscale2);
             var yaxis = d3.axisLeft(yscale);
 
             svg.append('g')
@@ -113,26 +114,23 @@
            }
 
 
-          function barchart(dataset){
-            var yscale2 = d3.scaleLinear()
-              .range([margin.top, 229]).clamp(true)
-              .domain([0, 100]);
+          function barchart(dataset, countries){
             var rectangles = svg.selectAll("rect")
                    .data(dataset)
                    .enter()
                    .append("rect")
                    .attr("x",  function(d, i) {
                    return xscale(i);
-                   // (i * (w_domain / dataset.length));
                      })
                    .attr("y", function(d) {
-                      return (h - margin.bottom) - (yscale2(d) * factor);
-                      // h_domain - (d * 2);  //Height minus data value
+                     console.log(yscale(d));
+                     console.log(d);
+                     return yscale(d);
                       })
                    .attr("width", ((w_domain / dataset.length) - barPadding))
                    .attr("height", function(d) {
-                     var barHeight = yscale2(d) * factor;
-                     return barHeight;
+                     var barHeight = yscale(d) * factor;
+                     return h - margin.bottom - yscale(d);
                    })
                    .attr("fill", function(d) {
                     return "rgb(" + (d * 1.8) + "," + (d * 1.0) + "," + (d * 2.5) + ")";
@@ -140,7 +138,7 @@
           }
 
           function barlabels(dataset){
-                 svg.selectAll("text")
+                 svg.selectAll("text", "barlabels")
           			   .data(dataset)
           			   .enter()
           			   .append("text")
@@ -158,8 +156,6 @@
           			   .attr("font-size", "11px")
           			   .attr("fill", "white");
                 }
-
-
 
 
 		    </script>
