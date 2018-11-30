@@ -21,14 +21,14 @@
             .html("The graph below shows the the child vaccination rates per country for the year 2016. <br>The average of different types of vaccinations has been calculated and shown in the graph.")
 
           // set width, height and margins of svg
-          var w = 1230;
+          var w = 1250;
           var h = 300;
           var barPadding = 1;
           var factor = 1
           var margin = {
                         top: 30,
                         left: 50,
-                        right: 30,
+                        right: 60,
                         bottom: 40
                       };
           w_domain = w - margin.left - margin.right;
@@ -163,27 +163,6 @@
                           .style("font-size", "1.0em")
                           .attr("font-weight", "bold")
           }
-          // create barlabels
-          function barlabels(dataset){
-                 svg.selectAll("text", "barlabels")
-                   .data(dataset)
-                   .enter()
-                   .append("text")
-                   .text(function(d) {
-                      return d.Value;
-                   })
-                   .attr("text-anchor", "middle")
-                   .attr("x", function(d, i) {
-                      return xscale(i) + 11;
-                   })
-                   .attr("y", function(d) {
-                      return yscale(d.Value) + 10;
-                   })
-                   .attr("font-family", "sans-serif")
-                   .attr("font-size", "11px")
-                   .attr("fill", "white");
-                }
-
 
 		    </script>
     </body>

@@ -1,0 +1,22 @@
+body {
+    background-color: #dd87c1;
+    color: black;
+}
+
+h1 {
+  font-family: verdana;
+  font-size: 26px;
+  color: #34105e;
+}
+
+h2 {
+    font-family: verdana;
+    font-size: 18px;
+    color: #34105e;
+}
+
+p {
+    font-size: 18px;
+    line-height: 12px;
+    font-family: georgia;
+}
