@@ -13,21 +13,24 @@ window.onload = function() {
       tob = response[1]
       obe = response[2]
       alcCountries = Object.keys(alc)
-      console.log(alcCountries)
-      tobCountries = Object.keys(tob)
-      obeCountries = Object.keys(obe)
+      dictAlc = makeDict(alc, alcCountries)
+      dictTob = makeDict(tob, alcCountries)
+      dictObe = makeDict(obe, alcCountries)
+      countries = makeCountries(dictAlc)
+      not_europe = ["CAN", "KOR", "TUR", "USA", "ISR"]
       alcValues = valuesArray(alc, alcCountries)
       minAlc = Math.min.apply(null, alcValues)
       maxAlc = Math.max.apply(null, alcValues)
-      tobValues = valuesArray(tob, tobCountries)
-      obeValues = valuesArray(obe, obeCountries)
+      tobValues = valuesArray(tob, alcCountries)
+      obeValues = valuesArray(obe, alcCountries)
       minObe = Math.min.apply(null, obeValues)
       maxObe = Math.max.apply(null, obeValues)
-      alcTob = makeCoordinates(tobValues, alcValues)
-      alcObe = makeCoordinates(alcValues, obeValues)
-      tobObe = makeCoordinates(tobValues, obeValues)
+      alcTob = makeCoordinates(dictAlc, dictTob)
+      alcObe = makeCoordinates(dictAlc, dictObe)
+      tobObe = makeCoordinates(dictTob, dictObe)
       valuesScatter = createMarginScales(minAlc, maxAlc, minObe, maxObe, alcObe)
-      createScatter(valuesScatter[0], valuesScatter[1], valuesScatter[2], valuesScatter[3], alcObe, alcCountries)
+      createScatter(valuesScatter[0], valuesScatter[1], valuesScatter[2], valuesScatter[3], alcObe, countries, not_europe)
+      makeLegend(valuesScatter[2])
   }).catch(function(e){
       throw(e);
   })
@@ -43,19 +46,35 @@ function valuesArray(data, keys)  {
       return array
 }
 
-function makeCoordinates(array1, array2) {
+function makeCoordinates(dict1, dict2) {
       output = []
-      for (i = 0; i < array1.length; i++) {
-          temp = [array1[i], array2[i]]
+      for (i = 0; i < dict1.length; i++) {
+          temp = [(dict1[i]).Value, (dict2[i]).Value]
           output.push(temp);
+      };
+      return output
+}
+
+function makeDict(data, keys) {
+      output = []
+      keys.forEach(function(key){
+        output.push((data[key]))
+      });
+      return output
+}
+
+function makeCountries(dict) {
+      output = []
+      for (i = 0; i < dict.length; i++) {
+          output.push(dict[i].LOCATION);
       };
       return output
 }
 
 var margin = {top: 10, right: 20, bottom: 20, left: 10},
   padding = {top: 10, right: 60, bottom: 60, left: 30},
-  outerWidth = 900,
-  outerHeight = 480,
+  outerWidth = 1100,
+  outerHeight = 500,
   innerWidth = outerWidth - margin.left - margin.right,
   innerHeight = outerHeight - margin.top - margin.bottom,
   width = innerWidth - padding.left - padding.right,
@@ -97,7 +116,7 @@ function createMarginScales(minX, maxX, minY, maxY, dataset) {
        return [xScale, yScale, svg, g]
     }
 
-function createScatter(xScale, yScale, svg, g, dataset, labels) {
+function createScatter(xScale, yScale, svg, g, dataset, labels, not_europe) {
       var gdots =  svg.selectAll("g.dot")
             .data(dataset)
             .enter().append('g');
@@ -116,23 +135,30 @@ function createScatter(xScale, yScale, svg, g, dataset, labels) {
             return (d[1] / 8);
          })
          .attr("opacity", function(d) {
-           return (d[1] / 100)
+           return (d[1] / 90)
          })
-         .style("fill", "#5400ff");
+         .style("fill", function(d, i) {
+           if (not_europe.includes(labels[i])) {
+             return "#2de50d"
+           } else {
+             return "#5400ff"
+           }
+         });
 
-     gdots.append("text").text(function(d, i){
-                  return labels[i];
-               })
-               .attr("x", function (d) {
-                   return xScale(d[0]);
-               })
-               .attr("y", function (d) {
-                   return yScale(d[1]);
-               })
-               .attr("font-family", "sans-serif")
-               .attr("font-size", "10px")
-               .style("font-weight", "bold")
-               .attr("fill", "#ff009d");
+
+       gdots.append("text").text(function(d, i){
+                    return labels[i];
+                 })
+                 .attr("x", function (d) {
+                     return xScale(d[0]) - 1;
+                 })
+                 .attr("y", function (d) {
+                     return yScale(d[1]) + 2;
+                 })
+                 .attr("font-family", "sans-serif")
+                 .attr("font-size", "9px")
+                 .style("font-weight", "bold")
+                 .attr("fill", "#ff009d");
 
          svg.append("text")
             .attr("class", "axis labels")
@@ -152,4 +178,37 @@ function createScatter(xScale, yScale, svg, g, dataset, labels) {
             .text("Self-reported obesitas")
             .style("text-anchor", "middle")
             .style("font-size", "16px");
+}
+
+function makeLegend(svg) {
+  legend = ["Europe", "Non-European"]
+
+  // draw legend
+   var legend = svg.selectAll(".legend")
+       .data(legend)
+       .enter().append("g")
+       .attr("class", "legend")
+       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+       // draw legend colored circles
+  legend.append("circle")
+      .attr("cx", width - 10)
+      .attr("cy", 10)
+      .attr("r", 9)
+      .style("fill", function(d, i) {
+          if (i == 0) {
+            return "#5400ff"
+          } else {
+            return "#2de50d"
+          }
+      })
+      .attr("opacity", 0.8);
+
+      // draw legend text
+     legend.append("text")
+         .attr("x", width - 24)
+         .attr("y", 9)
+         .attr("dy", ".35em")
+         .style("text-anchor", "end")
+         .text(function(d) { return d;})
 }
