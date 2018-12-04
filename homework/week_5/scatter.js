@@ -3,9 +3,9 @@
 // JavaScript file to make scatter plot
 
 window.onload = function() {
-  var input1 = "alcoholconsumption.json"
-  var input2 = "dailysmokers.json"
-  var input3 = "obesitas.json"
+  var input1 = "https://raw.githubusercontent.com/kim66003/dataprocessing/master/homework/week_5/alcoholconsumption.json"
+  var input2 = "https://raw.githubusercontent.com/kim66003/dataprocessing/master/homework/week_5/dailysmokers.json"
+  var input3 = "https://raw.githubusercontent.com/kim66003/dataprocessing/master/homework/week_5/obesitas.json"
   var requests = [d3.json(input1), d3.json(input2), d3.json(input3)];
   Promise.all(requests).then(function(response) {
       // functies hier aanroepen

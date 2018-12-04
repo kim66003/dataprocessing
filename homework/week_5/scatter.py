@@ -37,14 +37,11 @@ def convert_json(filename, dataframe):
 
 if __name__ == '__main__':
     df = create_dataframe(INPUT_FILE)
-    keys = set(df['LOCATION'])
     df = preprocess(df)
     convert_json(OUTPUT_FILE, df)
     df2 = create_dataframe(INPUT_FILE2)
-    keys2 = set(df2['LOCATION'])
     df2 = preprocess(df2)
     convert_json(OUTPUT_FILE2, df2)
     df3 = create_dataframe(INPUT_FILE3)
-    keys3 = set(df3['LOCATION'])
     df3 = preprocess2(df3)
     convert_json(OUTPUT_FILE3, df3)
