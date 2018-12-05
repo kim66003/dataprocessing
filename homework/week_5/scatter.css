@@ -17,3 +17,14 @@ p {
       font-family: helvetica;
       font-size: 15px;
 }
+
+.legend {
+	            padding: 5px;
+	            font: 15px sans-serif;
+	            background: yellow;
+	            box-shadow: 2px 2px 1px #888;
+            }
+
+select {
+            display: block;
+        }

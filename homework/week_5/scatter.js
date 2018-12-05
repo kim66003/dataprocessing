@@ -9,6 +9,7 @@ window.onload = function() {
   var requests = [d3.json(input1), d3.json(input2), d3.json(input3)];
   Promise.all(requests).then(function(response) {
       // functies hier aanroepen
+      createDropdown()
       alc = response[0]
       tob = response[1]
       obe = response[2]
@@ -25,7 +26,9 @@ window.onload = function() {
       obeValues = valuesArray(obe, alcCountries)
       minObe = Math.min.apply(null, obeValues)
       maxObe = Math.max.apply(null, obeValues)
-      alcTob = makeCoordinates(dictAlc, dictTob)
+      minTob = Math.min.apply(null, tobValues)
+      maxTob = Math.max.apply(null, tobValues)
+      tobAlc = makeCoordinates(dictTob, dictAlc)
       alcObe = makeCoordinates(dictAlc, dictObe)
       tobObe = makeCoordinates(dictTob, dictObe)
       valuesScatter = createMarginScales(minAlc, maxAlc, minObe, maxObe, alcObe)
@@ -72,7 +75,7 @@ function makeCountries(dict) {
 }
 
 var margin = {top: 10, right: 20, bottom: 20, left: 10},
-  padding = {top: 10, right: 60, bottom: 60, left: 30},
+  padding = {top: 20, right: 60, bottom: 60, left: 30},
   outerWidth = 1100,
   outerHeight = 500,
   innerWidth = outerWidth - margin.left - margin.right,
@@ -94,7 +97,7 @@ function createMarginScales(minX, maxX, minY, maxY, dataset) {
       var xAxis = d3.axisBottom(xScale);
       var yAxis = d3.axisLeft(yScale);
 
-      var svg = d3.select("body").append("svg")
+      var svg = d3.select("#correlations").append("svg")
           .attr("width", outerWidth)
           .attr("height", outerHeight)
           .append("g")
@@ -143,7 +146,36 @@ function createScatter(xScale, yScale, svg, g, dataset, labels, not_europe) {
            } else {
              return "#5400ff"
            }
+         })
+         // change color and show info when you hover over bars with mouse
+         .on("mouseover", function(){
+             d3.select(this)
+             .attr("opacity", 1)
+               tooltip.style("display", null);
+         })
+         .on("mouseout", function(){
+             d3.select(this)
+             .attr("opacity", function(d) {
+               return (d[1] / 90)
+             })
+             tooltip.style("display", "none");
+         })
+         .on("mousemove", function(d){
+             var xPos = d3.mouse(this)[0] - 15;
+             var yPos = d3.mouse(this)[1] - 35;
+             tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")");
+             tooltip.select("text").text(d[0] + ", " + d[1]);
+             tooltip.attr("fill", "#000a28")
+             tooltip.style("font-family", "sans-serif")
          });
+         var tooltip = svg.append("g")
+                         .attr("class", tooltip)
+                         .style("display", "none");
+         tooltip.append("text")
+                 .attr("x", 15)
+                 .attr("dy", "1.2em")
+                 .style("font-size", "0.9em")
+                 .attr("font-weight", "light");
 
 
        gdots.append("text").text(function(d, i){
@@ -160,12 +192,23 @@ function createScatter(xScale, yScale, svg, g, dataset, labels, not_europe) {
                  .style("font-weight", "bold")
                  .attr("fill", "#ff009d");
 
+          //Create Title
+         svg.append("text")
+         .attr("class", "title")
+         .attr("x", width / 2 )
+         .attr("y", 10)
+         .style("text-anchor", "middle")
+         .attr("font-family", "sans-serif")
+         .text("Association between alcohol/tobacco and obesity for population aged 15+ in 2014")
+         .style("font-size", "16px");
+
          svg.append("text")
             .attr("class", "axis labels")
             .attr("transform",
                   "translate(" + ((width / 1.8)) + " ," +
-                                 (height + padding.bottom - 10) + ")")
-            .text("Alcoholconsumption")
+                                 (height + padding.bottom + 10) + ")")
+            .text("Alcoholconsumption in litres per capita")
+            .attr("font-family", "sans-serif")
             .style("text-anchor", "middle")
             .style("font-size", "16px");
 
@@ -175,7 +218,8 @@ function createScatter(xScale, yScale, svg, g, dataset, labels, not_europe) {
             .attr("x", 0 - (height / 1.7))
             .attr("y", 0 + margin.left)
             .attr("dy", "1em")
-            .text("Self-reported obesitas")
+            .text("Self-reported obesitas in %")
+            .attr("font-family", "sans-serif")
             .style("text-anchor", "middle")
             .style("font-size", "16px");
 }
@@ -208,7 +252,53 @@ function makeLegend(svg) {
      legend.append("text")
          .attr("x", width - 24)
          .attr("y", 9)
-         .attr("dy", ".35em")
+         .attr("dy", ".4em")
+         .attr("font-family", "sans-serif")
          .style("text-anchor", "end")
          .text(function(d) { return d;})
+}
+
+function createDropdown() {
+  // Create a dropdown
+  var dropdown = d3.select("#correlations");
+
+  var dropdowntitles = ["Correlation between alcohol consumption and obesity", "Correlation between daily smokers and obesity", "Correlation between daily smokers and alcohol consumption"]
+
+
+  selectBox = dropdown
+  .append("select")
+  .attr("id", "selectBox")
+  .on("change", changeFunc)
+
+  selectBox.selectAll("option")
+      .data(dropdowntitles)
+      .enter()
+      .append("option")
+      .attr("value", function(d){
+          return d;
+      })
+      .text(function(d){
+          return d;
+      })
+      .attr("onclick", function(d){
+        if (d.includes("alcohol consumption and obesity")) {
+          console.log("hoi")
+        };
+      });
+
+}
+
+changeFunc = function changeFunc() {
+  var selectBox = document.getElementById("selectBox");
+  var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+  if (selectedValue.includes("alcohol consumption and obesity")) {
+    console.log("true")
+  };
+  if (selectedValue.includes("daily smokers and obesity")) {
+    console.log("hallo")
+  };
+  if (selectedValue.includes("daily smokers and alcohol consumption")) {
+    console.log("kim")
+  };
+  return selectedValue
 }
