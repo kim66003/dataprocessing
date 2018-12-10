@@ -3,19 +3,20 @@ import json
 import numpy as np
 import pandas as pd
 
-INPUT_FILE = ["heroin_retailprices_europe.csv", "cocaine_retailprices_europe.csv",
-"heroin_retailprices_us.csv", "cocaine_retailprices_us.csv", "heroin_wholesaleprices_europe.csv",
-"cocaine_wholesaleprices_europe.csv", "cocaine_wholesaleprices_us.csv", "heroin_wholesaleprices_us.csv"]
+INPUT_FILE = ["data/heroin_retailprices_europe.csv", "data/cocaine_retailprices_europe.csv",
+"data/heroin_retailprices_us.csv", "data/cocaine_retailprices_us.csv", "data/heroin_wholesaleprices_europe.csv",
+"data/cocaine_wholesaleprices_europe.csv", "data/cocaine_wholesaleprices_us.csv", "data/heroin_wholesaleprices_us.csv"]
 
-OUTPUT_FILE = ["heroin_retail_europe.json", "cocaine_retail_europe.json", "heroin_retail_us.json",
-"cocaine_retail_us.json", "heroin_wholesale_europe.json", "cocaine_wholesale_europe.json",
-"cocaine_wholesale_us.json", "heroin_wholesale_us.json"]
+OUTPUT_FILE = ["data/heroin_retail_europe.json", "data/cocaine_retail_europe.json", "data/heroin_retail_us.json",
+"data/cocaine_retail_us.json", "data/heroin_wholesale_europe.json", "data/cocaine_wholesale_europe.json",
+"data/cocaine_wholesale_us.json", "data/heroin_wholesale_us.json"]
 
 def create_dataframe(filename):
     dataframe = pd.read_csv(filename)
     return dataframe
 
 def preprocess(dataframe):
+    dataframe = dataframe.apply(lambda x: x.str.replace(',','') if type(x) is str else x)
     for i, key in enumerate(dataframe):
         try:
             dataframe[key] = dataframe[key].str.replace(',','')
