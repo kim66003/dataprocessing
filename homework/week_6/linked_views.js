@@ -40,6 +40,25 @@ Promise.all(requests).then(function(response) {
       width = innerWidth - padding.left - padding.right,
       height = innerHeight - padding.top - padding.bottom;
 
+      var categorical = [
+      { "name" : "schemeAccent", "n": 8},
+      { "name" : "schemeDark2", "n": 8},
+      { "name" : "schemePastel2", "n": 8},
+      { "name" : "schemeSet2", "n": 8},
+      { "name" : "schemeSet1", "n": 9},
+      { "name" : "schemePastel1", "n": 9},
+      { "name" : "schemeCategory10", "n" : 10},
+      { "name" : "schemeSet3", "n" : 12 },
+      { "name" : "schemePaired", "n": 12},
+      { "name" : "schemeCategory20", "n" : 20 },
+      { "name" : "schemeCategory20b", "n" : 20},
+      { "name" : "schemeCategory20c", "n" : 20 }
+    ]
+
+      const colorScale = d3.scaleOrdinal(d3[categorical[0].name]);
+
+      const title = 'Heroin and cocaine retailprices (streetprices) in Western Europe';
+
       // create x and y scale
       var xScale = d3.scaleLinear()
         .range([(margin.left + padding.left), width])
@@ -53,8 +72,12 @@ Promise.all(requests).then(function(response) {
 
       // x and y axis to scale
       var xAxis = d3.axisBottom(xScale)
-                  .tickFormat(function(d){ return d });
-      var yAxis = d3.axisLeft(yScale);
+                  .tickFormat(function(d){ return d })
+                  .tickPadding(15);
+      const xAxisLabel = 'Year';
+      var yAxis = d3.axisLeft(yScale)
+                  .tickPadding(10);
+      const yAxisLabel = 'US$ per gram';
 
       // create svg
       var svg = d3.select("body").append("svg")
@@ -77,6 +100,22 @@ Promise.all(requests).then(function(response) {
           .attr("class", "y axis")
           .attr("transform", "translate(" + (margin.left + padding.left) + ",0)")
           .call(yAxis);
+
+      g.append('text')
+      .attr('class', 'axis-label')
+      .attr('y', outerHeight - padding.bottom)
+      .attr('x', innerWidth / 2 - 20)
+      .attr('fill', 'black')
+      .text(xAxisLabel);
+
+      g.append('text')
+      .attr('class', 'axis-label')
+      .attr('y', margin.left - 15)
+      .attr('x', -innerHeight / 2 + 15)
+      .attr('fill', 'black')
+      .attr('transform', `rotate(-90)`)
+      .attr('text-anchor', 'middle')
+      .text(yAxisLabel);
 
       // d3's line generator
       var line = d3.line()
