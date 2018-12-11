@@ -117,6 +117,10 @@ Promise.all(requests).then(function(response) {
       .attr('text-anchor', 'middle')
       .text(yAxisLabel);
 
+      var dataNest = d3.nest()
+              .key(function(d, i) {return d[i];})
+              .entries(creu_dict);
+        console.log(dataNest)
       // define the line
       var valueline = d3.line()
           .x(function(d) { return xScale(d.year) })
