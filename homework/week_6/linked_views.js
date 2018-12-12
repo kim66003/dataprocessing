@@ -1,4 +1,57 @@
 window.onload = function() {
+
+  var format = d3.format(",");
+
+    footer = d3.select("footer")
+
+    footer.append("p")
+          .append("text")
+          .text("Heroine and cocaine retail- and wholeprices in Europe and US")
+          .attr("class", "head")
+          .append("p")
+          .append("text")
+          .text("Name: Kimberley Boersma, student number: 11003464")
+          .attr("class", "h2")
+          .append("p")
+          .text("Data source:")
+          .append("a")
+          .attr("xlink:href", "https://dataunodc.un.org/drugs/heroin_and_cocaine_prices_in_eu_and_usa"+"Data Source");
+
+
+// Set tooltips
+var tip = d3.tip()
+            .attr('class', 'd3-tip')
+            .offset([-10, 0])
+            .html(function(d) {
+              return "<strong>Country: </strong><span class='details'>" + d.properties.name + "<br></span>" + "<strong>Population: </strong><span class='details'>" + format(d.population) +"</span>";
+            })
+
+var margin = {top: -100, right: 0, bottom: 0, left: 0},
+            width = 960 - margin.left - margin.right,
+            height = 500 - margin.top - margin.bottom;
+
+var color = d3.scaleThreshold()
+    .domain([10000,100000,500000,1000000,5000000,10000000,50000000,100000000,500000000,1500000000])
+    .range(["rgb(247,251,255)", "rgb(222,235,247)", "rgb(198,219,239)", "rgb(158,202,225)", "rgb(107,174,214)", "rgb(66,146,198)","rgb(33,113,181)","rgb(8,81,156)","rgb(8,48,107)","rgb(3,19,43)"]);
+
+var path = d3.geoPath();
+
+var svg = d3.select("body")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append('g')
+            .attr('class', 'map');
+
+var projection = d3.geoMercator()
+                   .scale(130)
+                  .translate( [width / 2, height / 1.5]);
+
+var path = d3.geoPath().projection(projection);
+
+svg.call(tip);
+
+
 var input1 = "data/cocaine_retail_europe.json"
 var input2 = "data/heroin_retail_europe.json"
 var input3 = "data/cocaine_retail_us.json"
@@ -7,8 +60,11 @@ var input5 = "data/cocaine_wholesale_europe.json"
 var input6 = "data/heroin_wholesale_europe.json"
 var input7 = "data/cocaine_wholesale_us.json"
 var input8 = "data/heroin_wholesale_us.json"
+var input9 = "data/world_countries.json"
+var input10 = "data/world_population.tsv"
+
 var requests = [d3.json(input1), d3.json(input2), d3.json(input3), d3.json(input4),
-d3.json(input5), d3.json(input6), d3.json(input7), d3.json(input8)];
+d3.json(input5), d3.json(input6), d3.json(input7), d3.json(input8), d3.json(input9), d3.tsv(input10), svg];
 
 Promise.all(requests).then(function(response) {
     coca_ret_eu = response[0]
@@ -19,6 +75,51 @@ Promise.all(requests).then(function(response) {
     hero_whole_eu = response[5]
     coca_whole_us = response[6]
     hero_whole_us = response[7]
+    console.log(coca_ret_eu)
+    data = response[8]
+    population = response[9]
+    svg = response[10]
+
+    var populationById = {};
+
+      population.forEach(function(d) { populationById[d.id] = +d.population; });
+      data.features.forEach(function(d) { d.population = populationById[d.id] });
+
+      svg.append("g")
+          .attr("class", "countries")
+        .selectAll("path")
+          .data(data.features)
+        .enter().append("path")
+          .attr("d", path)
+          .style("fill", function(d) { return color(populationById[d.id]); })
+          .style('stroke', 'white')
+          .style('stroke-width', 1.5)
+          .style("opacity",0.8)
+          // tooltips
+            .style("stroke","white")
+            .style('stroke-width', 0.3)
+            .on('mouseover',function(d){
+              tip.show(d);
+
+              d3.select(this)
+                .style("opacity", 1)
+                .style("stroke","white")
+                .style("stroke-width",3);
+            })
+            .on('mouseout', function(d){
+              tip.hide(d);
+
+              d3.select(this)
+                .style("opacity", 0.8)
+                .style("stroke","white")
+                .style("stroke-width",0.3);
+            });
+
+      svg.append("path")
+          .datum(topojson.mesh(data.features, function(a, b) { return a.id !== b.id; }))
+           // .datum(topojson.mesh(data.features, function(a, b) { return a !== b; }))
+          .attr("class", "names")
+          .attr("d", path);
 
     all = arrayValues(coca_ret_eu)
     creu = all[0]
@@ -29,6 +130,7 @@ Promise.all(requests).then(function(response) {
     minX = Math.min.apply(null, years)
     maxX = Math.max.apply(null, years)
     creu_dict = all[3]
+    countries = Object.keys(coca_ret_eu);
 
     // create margins and padding
     var margin = {top: 10, right: 20, bottom: 20, left: 10},
@@ -40,24 +142,9 @@ Promise.all(requests).then(function(response) {
       width = innerWidth - padding.left - padding.right,
       height = innerHeight - padding.top - padding.bottom;
 
-      var categorical = [
-      { "name" : "schemeAccent", "n": 8},
-      { "name" : "schemeDark2", "n": 8},
-      { "name" : "schemePastel2", "n": 8},
-      { "name" : "schemeSet2", "n": 8},
-      { "name" : "schemeSet1", "n": 9},
-      { "name" : "schemePastel1", "n": 9},
-      { "name" : "schemeCategory10", "n" : 10},
-      { "name" : "schemeSet3", "n" : 12 },
-      { "name" : "schemePaired", "n": 12},
-      { "name" : "schemeCategory20", "n" : 20 },
-      { "name" : "schemeCategory20b", "n" : 20},
-      { "name" : "schemeCategory20c", "n" : 20 }
-    ]
+      const colorScale = d3.schemeCategory10 // d3.scaleOrdinal(d3[categorical[0].name]);
 
-      const colorScale = d3.scaleOrdinal(d3[categorical[0].name]);
-
-      const title = 'Heroin and cocaine retailprices (streetprices) in Western Europe';
+      const title = 'Cocaine retailprices (streetprices) in Western Europe';
 
       // create x and y scale
       var xScale = d3.scaleLinear()
@@ -117,24 +204,58 @@ Promise.all(requests).then(function(response) {
       .attr('text-anchor', 'middle')
       .text(yAxisLabel);
 
+      g.append('text')
+      .attr('class', 'title')
+      .attr('x', innerWidth / 2)
+      .attr('y', margin.top)
+      .text(title);
+
+
       var dataNest = d3.nest()
-              .key(function(d, i) {return d[i];})
+              .key(function(d, i) {return d[0].country;})
               .entries(creu_dict);
-        console.log(dataNest)
+
       // define the line
       var valueline = d3.line()
           .x(function(d) { return xScale(d.year) })
           .y(function(d) { return yScale(d.value) })
           .curve(d3.curveMonotoneX); // apply smoothing to the line
 
+      var returnValue = (function(d) { return d.value});
+
       // Append the path, bind the data, and call the line generator
       for (i = 0; i < creu_dict.length; i++){
         g.append("path")
-            // .datum(creu_dict[i]) // Binds data to the line
             .attr("class", "line") // Assign a class for styling
             .attr("d", valueline(creu_dict[i])) // Calls the line generator
-            .style("fill", function(d, i ) { return colorScale(d); });
-
+            .attr("id", countries[i])
+            .style("stroke", function(d, t ) { return colorScale[i % 10]; })
+            .on("mouseover", function(){
+                d3.select(this)
+                .attr("opacity", 0.4)
+                  tooltip.style("display", null);
+            })
+            .on("mouseout", function(){
+                d3.select(this)
+                .attr("opacity", 1)
+                tooltip.style("display", "none");
+            })
+            .on("mousemove", function(d){
+                var xPos = d3.mouse(this)[0] - 15;
+                var yPos = d3.mouse(this)[1] - 35;
+                tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")");
+                tooltip.select("text").text(this.id);
+                tooltip.attr("fill", "#000a28")
+                tooltip.style("font-family", "comic sans ms")
+            });
+            var tooltip = svg.append("g")
+                            .attr("class", tooltip)
+                            .style("display", "none");
+            tooltip.append("text")
+                    .attr("x", 15)
+                    .attr("dy", "1.2em")
+                    .style("font-size", "0.9em")
+                    .attr("font-weight", "light");
       }
 
 
@@ -166,7 +287,6 @@ function arrayValues(data) {
     dicto.push(temp)
     values.push(temp_values)
   }
-  console.log(dicto)
   return [values, values_all, years, dicto]
 
   }
