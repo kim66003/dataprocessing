@@ -4,7 +4,7 @@ body {
 
 h2 {
   color: #77173f;
-  font-family: comic sans ms;
+  font-family: bookman old style;
   font-size: 23px;
 }
 
@@ -17,7 +17,7 @@ h2 {
 
 .line {
     fill: none;
-    stroke: #00575e;
+    stroke: #e8bef4;
     stroke-width: 3;
 }
 
@@ -38,24 +38,30 @@ stroke: steelblue;
 }
 
 .axis-label {
-  font-size: 1.0em;
+  font-size: 0.9em;
   fill: #4f4d4b;
-  font-family: comic sans ms;
+  font-family: bookman old style;
 }
 
 .title {
   fill: black;
   text-anchor: middle;
-  font-family: comic sans ms;
-  font-size: 20px;
+  font-family: bookman old style;
+  font-size: 18px;
+}
+
+.tooltip-text {
+  fill: #044e56;
+  font-family: sans-serif;
+  font-size: 0.9em;
 }
 
 /* Tooltip CSS */
     .d3-tip {
-    line-height: 1.5;
-    font-weight: 400;
-    font-family:"avenir next", Arial, sans-serif;
-    padding: 6px;
+    line-height: 1.2;
+    font-weight: 200;
+    font-family:"avenir next", bookman old style, sans-serif;
+    padding: 5px;
     background: rgba(0, 0, 0, 0.6);
     color: #FFA500;
     border-radius: 1px;
@@ -66,7 +72,7 @@ stroke: steelblue;
     .d3-tip:after {
       box-sizing: border-box;
       display: inline;
-      font-size: 8px;
+      font-size: 7px;
       width: 100%;
       line-height: 1.5;
       color: rgba(0, 0, 0, 0.6);
