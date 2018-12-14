@@ -1,11 +1,11 @@
 body {
-      background-color: #a1c6a7;
+      background-color: #ffddea;
 }
 
 h2 {
-  color: #e02c2c;
+  color: #77173f;
   font-family: comic sans ms;
-  font-size: 20px;
+  font-size: 23px;
 }
 
 .line-path {
@@ -47,14 +47,7 @@ stroke: steelblue;
   fill: black;
   text-anchor: middle;
   font-family: comic sans ms;
-  font-size: 16px;
-}
-
-footer {
-  background-color: #777;
-  padding: 10px;
-  text-align: center;
-  color: white;
+  font-size: 20px;
 }
 
 /* Tooltip CSS */
