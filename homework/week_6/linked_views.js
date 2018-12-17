@@ -11,10 +11,10 @@ var tip = d3.tip()
             })
 
 var margin = {top: 0, right: 0, bottom: 0, left: 0},
-            width = 600 - margin.left - margin.right,
+            width = 620 - margin.left - margin.right,
             height = 500 - margin.top - margin.bottom,
-            min = 27000,
-            max = 56000;
+            min = 25000,
+            max = 60000;
 
 var color = d3.scaleSequential(d3.interpolateOrRd)
               .domain([min, max]);
@@ -30,7 +30,7 @@ var svg = d3.select("body")
 
 var projection = d3.geoMercator()
                    .scale(170)
-                  .translate( [width / 1.3, height / 1]);
+                  .translate( [width / 1.25, height / 1]);
 
 var path = d3.geoPath().projection(projection);
 
@@ -64,15 +64,9 @@ Promise.all(requests).then(function(response) {
     wholesale = response[9]
     svg = response[10]
 
-    all = arrayValues(coca_ret_eu)
-    cweuArray = arrayValues(coca_whole_eu)
-    creu = all[0]
-    creu_all = all[1]
-    maxCreu = Math.max.apply(null, creu_all)
-    years = all[2]
+    years = getYears(coca_ret_eu)
     minYear = Math.min.apply(null, years)
     maxYear = Math.max.apply(null, years)
-    creu_dict = all[3]
     countriesEU = Object.keys(coca_ret_eu);
     countryUS = "Average inflation adjusted in 2016 US$"
 
@@ -128,13 +122,18 @@ Promise.all(requests).then(function(response) {
             })
             .on("mousedown", function(d) {
               if (d.properties.name == "USA") {
-                d3.select("#graph").remove();
+                d3.select("#retail").remove();
                 update(dictRetailUS, countriesEU, years, minYear, maxYear, d.properties.name)
+                d3.select("#wholesale").remove();
+                update(dictWholeUS, countriesEU, years, minYear, maxYear, d.properties.name)
               } else if (countriesEU.includes(d.properties.name)) {
-                d3.select("#graph").remove();
+                d3.select("#retail").remove();
                 update(dictRetailEU, countriesEU, years, minYear, maxYear, d.properties.name)
+                d3.select("#wholesale").remove();
+                update(dictWholeEU, countriesEU, years, minYear, maxYear, d.properties.name)
               } else {
-                d3.select("#graph").remove();
+                d3.select("#retail").remove();
+                d3.select("#wholesale").remove();
               }
             });
 
@@ -143,31 +142,94 @@ Promise.all(requests).then(function(response) {
           .attr("class", "names")
           .attr("d", path);
 
+      data = d3.scaleSequential(d3.interpolateOrRd)
+      .domain([min, max])
+
+           var defs = svg.append("defs");
+
+           var linearGradient = defs.append("linearGradient")
+                                     .attr("id", "linear-gradient");
+
+           linearGradient
+               .attr("x1", "0%")
+               .attr("y1", "100%")
+               .attr("x2", "0%")
+               .attr("y2", "0%");
+
+           linearGradient.selectAll("stop")
+               .data([
+                 {offset: "0%", color: color(min)},
+                 {offset: "25%", color: color((max - min) / 4 + min)},
+                 {offset: "50%", color: color(((max - min) / 4) * 2 + min)},
+                 {offset: "75%", color: color(((max - min) / 4) * 3 + min)},
+                 {offset: "100%", color: color(max)}
+               ])
+               .enter().append("stop")
+               .attr("offset", function(d) {
+                 return d.offset;
+               })
+               .attr("stop-color", function(d) {
+                 return d.color;
+               });
+
+           var legend = svg.append("rect")
+                   .attr("width", 20)
+                   .attr("height", height - 15)
+                   .style("fill", "url(#linear-gradient)")
+                   .attr("transform", "translate(40,10)")
+                   .attr("opacity", 0.8);
+
+           var y = d3.scaleLinear()
+                   .range([0, height - 15])
+                   .domain([max, min]);
+
+           var yAxis = d3.axisLeft()
+                   .scale(y)
+                   .ticks(5);
+
+           // Add axis
+           svg.append("g")
+             .attr("class", "yAxis")
+             .attr("transform", "translate(40,10)")
+             .call(yAxis)
+
+
 
 }).catch(function(e){
     throw(e);
 });
 
 function update(data, countries, years, minX, maxX, id){
-  // remove whole svg
 
-  if (countries.includes(id)) {
+  if (countries.includes(id) && data[id][0][0][1] < 1000) {
     minMax = calcMinMax(coca_ret_eu, hero_ret_eu, id)
     minY = minMax[0]
     maxY = minMax[1]
+  } else if (countries.includes(id) && data[id][0][0][1] > 1000) {
+    minMax = calcMinMax(coca_whole_eu, hero_whole_eu, id)
+    minY = minMax[0]
+    maxY = minMax[1]
   } else {
+    if (data[id][0][0][1] < 1000) {
       minMaxUS = calcMinMax(coca_ret_us, hero_ret_us, countryUS)
       minY = minMaxUS[0]
       maxY = minMaxUS[1]
+    } else {
+      minMaxUS = calcMinMax(coca_whole_us, hero_whole_us, countryUS)
+      minY = minMaxUS[0]
+      maxY = minMaxUS[1]
+    }
   }
 
     var title = 'Cocaine and heroin retailprices (streetprices) in ' + id
+    var title2 = 'Cocaine and heroin wholesaleprices in ' + id
 
-    lineID = ["Cocaine wholesaleprices " + id, "Heroin wholesaleprices " + id]
+    lineID = ["Cocaine retailprices ", "Heroin retailprices "]
+    lineID2 = ["Cocaine wholesaleprices ", "Heroin wholesaleprices "]
 
     // create margins and padding
-    var margin = {top: 0, right: 0, bottom: 0, left: 10},
-      padding = {top: 20, right: 0, bottom: 60, left: 30},
+    var margin = {top: 0, right: 20, bottom: 0, left: 0},
+      padding = {top: 20, right: 0, bottom: 50, left: 40},
       outerWidth = 600,
       outerHeight = 500,
       innerWidth = outerWidth - margin.left - margin.right,
@@ -177,7 +239,10 @@ function update(data, countries, years, minX, maxX, id){
 
       // create svg
       var svg = d3.select("body").append("svg")
-          .attr("id", "graph")
+          .attr("id", function() {
+            if (data[id][0][0][1] < 1000) { return "retail"} else {
+              return "wholesale"
+            }})
           .attr("width", outerWidth)
           .attr("height", outerHeight)
           .append("g")
@@ -232,8 +297,9 @@ function update(data, countries, years, minX, maxX, id){
 
     g.append('text')
     .attr('class', 'axis-label')
-    .attr('y', margin.left - 15)
-    .attr('x', -innerHeight / 2 + 15)
+    .attr('y', function() { if (data[id][0][0][1] < 1000) { return margin.left }
+                            else { return margin.left - 20}})
+    .attr('x', - innerHeight / 2)
     .attr('fill', 'black')
     .attr('transform', `rotate(-90)`)
     .attr('text-anchor', 'middle')
@@ -243,7 +309,8 @@ function update(data, countries, years, minX, maxX, id){
     .attr('class', 'title')
     .attr('x', innerWidth / 2 - 10)
     .attr('y', margin.top)
-    .text(title);
+    .text( function() { if (data[id][0][0][1] < 1000) { return title; }
+    else { return title2 }});
 
 
     var dataNest = d3.nest()
@@ -264,10 +331,12 @@ function update(data, countries, years, minX, maxX, id){
           .append("path")
           .attr("class", "line") // Assign a class for styling
           .attr("d", function(d) { return valueline(d); } ) // Calls the line generator
-          .attr("id", function(d, i) { return lineID[i]; })
+          .attr("id", function(d, i) {
+            if (data[id][0][0][1] < 1000) { return lineID[i] + id; }
+            else { return lineID2[i] + id} })
           .style("stroke", function(d, i) {
             if (i == 0) { return "#6c069b"}
-            else { return "#964d04" };
+            else { return "#ba6816" };
             })
           .on("mouseover", function(){
               d3.select(this)
@@ -293,35 +362,47 @@ function update(data, countries, years, minX, maxX, id){
           tooltip.append("text")
                   .attr("x", 15)
                   .attr("dy", "1em");
-}
 
+        // draw legend
+         var legend = svg.selectAll(".legend")
+             .data( function() { if (data[id][0][0][1] < 1000) { return lineID }
+                                  else { return lineID2 }})
+             .enter().append("g")
+             .attr("class", "legend")
+             .attr("transform", function(d, i) { return "translate(20," + i * 20 + ")"; });
+
+             legend.append("rect")
+               .attr("x", width + 10)
+               .attr("y", 40)
+               .attr("width", 18)
+               .attr("height", 18)
+               .style("fill", function(d, i) {
+                 if (i == 0) { return "#6c069b"}
+                 else { return "#ba6816" };
+                 })
+
+               // add text to legend
+               legend.append("text")
+                 .attr("x", function() { if (data[id][0][0][1] < 1000) { return width - 115 }
+                                      else { return width - 145 }})
+                 .attr("y", 55)
+                 .text(function(d){
+                   return d; })
+                .attr("font-family", "sans-serif")
+                .attr("font-size", "14px")
+}
 
 };
 
-function arrayValues(data) {
-  values = []
-  values_all = []
-  dicto = []
+function getYears(data) {
   for (key in data) {
-    temp = []
     years = []
-    temp_values = []
     countries = data[key]
     for (key2 in countries){
-        temp.push({
-          country: key,
-          year: Number(key2),
-          value: countries[key2]
-        })
       years.push(Number(key2))
-      temp_values.push(countries[key2])
-      values_all.push(countries[key2])
     }
-    dicto.push(temp)
-    values.push(temp_values)
   }
-  return [values, values_all, years, dicto]
-
+  return years
   }
 
 function calcMinMax(data, data2, country) {
